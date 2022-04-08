@@ -1,5 +1,10 @@
+from lib2to3.pytree import convert
 import math
 import datetime
+import pandas as pd
+import numpy as np
+
+from numpy import average
 
 
 def round_up(n, decimals=0):
@@ -14,6 +19,12 @@ def convert_to_seconds(values):
         h, m = x.split(':')
         total += int(h) * 3600 + int(m) * 60
     return total
+
+
+def percentage_to_float(values):
+    values['rel_bad_boxes'] = values['rel_bad_boxes'].str.rstrip(
+        '%').astype('float') / 100
+    return values
 
 
 def get_ws_pm():
@@ -43,4 +54,24 @@ def get_ws_pm():
 
 
 def calculate_totals(df_a, df_b, df_c, df_d):
-    return 'lolno'
+    df_total = pd.concat([df_a, df_b, df_c, df_d])
+    df_return = []
+    percentage_to_float(df_total)
+    # calculate total boxes
+    df_return.append(sum(df_total['produced_boxes']))
+    df_return.append(convert_to_seconds(df_total['run_time']))
+    df_return.append(convert_to_seconds(df_total['idle_time']))
+    df_return.append(convert_to_seconds(df_total['error_time']))
+    df_return.append(convert_to_seconds(df_total['corr_maint_time']))
+    df_return.append(convert_to_seconds(df_total['prev_maint_time']))
+    df_return.append(get_ws_pm() * 4 - sum(df_return[1:5]))
+    df_return.append(sum(df_total['abs_bad_boxes']))
+    df_return.append(df_total.where(df_total['run_time'] > '01:00')[
+                     'rel_bad_boxes'].mean())
+    df_return.append(sum(df_b['produced_boxes']))
+    df_return.append(sum(df_a['produced_boxes']))
+    df_return.append(sum(df_c['produced_boxes']))
+    df_return.append(sum(df_d['produced_boxes']))
+    return df_return
+
+    #pd.DataFrame({'Name': [], 'Value': []})
