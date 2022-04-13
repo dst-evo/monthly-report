@@ -56,6 +56,9 @@ machine_names = ['L1 - VPM B (4958)', 'L2 - VPM A (4959)',
 #   total produced boxes per day
 #   bad boxes per day
 
+# TODO: generaly increase font size for better readability, one is able to read it
+# but slightly bigger would be better
+
 
 def single_linechart(val_b, val_a, val_c, val_d, date, tag):
     x = np.arange(len(date))
@@ -99,6 +102,9 @@ def historic_single_barplot(values, tag):
     plt.gca().set_xticklabels([ts.strftime('%b - %Y') if ts.year != values.index[idx-1].year
                                else ts.strftime('%b - %Y') for idx, ts in enumerate(values.index)])
     add_value_labels(plt.gca())
+
+    plt.tight_layout()
+    # plt.autofmt_xdate()
 
     plt.box(False)
     plt.savefig('./output/img/historic_single_bar_' + tag + '.pdf')
@@ -272,7 +278,7 @@ def hisoric_multi_percent(values, tag='test', avail=False):
 
 # pie chart to display relative time in different states
 
-
+# TODO: increase label and legend size for better readability
 def pie_chart(values, tag):
     # create a list with total seconds for each machine state
     pie_vals = []
@@ -300,6 +306,8 @@ def pie_chart(values, tag):
 
     plt.savefig('./output/img/pie_chart_' + tag + '.pdf')
     plt.clf()
+
+# TODO: change label and Legend text size for better readability
 
 
 def donut_chart(values, tag):
