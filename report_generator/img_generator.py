@@ -29,6 +29,7 @@ plt.rcParams['axes.axisbelow'] = True
 plt.rcParams['legend.frameon'] = False
 plt.rcParams['legend.loc'] = 'upper center'
 plt.rcParams['lines.linewidth'] = 3.5
+plt.rcParams['font.size'] = 22
 
 # viridis discrete hex codes
 #   #FDE725 = L1 - VPM B (4958)
@@ -71,8 +72,8 @@ def single_linechart(val_b, val_a, val_c, val_d, date, tag):
 
     box = ax.get_position()
     ax.set_position([box.x0, box.y0 + box.height *
-                    0.1, box.width, box.height * 0.9])
-    ax.legend(['Total'], bbox_to_anchor=(0.5, -0.05), ncol=1)
+                    0.2, box.width, box.height * 0.8])
+    ax.legend(['Total'], bbox_to_anchor=(0.5, -0.15), ncol=1)
 
     ax.set_xticks(range(date.size))
     ax.set_xticklabels([ts.strftime('%d/%m') if ts.year != date[idx-1].year
@@ -143,9 +144,9 @@ def daily_barplot(val_b, val_a, val_c, val_d, date, tag, percentage=False, avail
 
     box = ax.get_position()
     ax.set_position([box.x0, box.y0 + box.height *
-                    0.1, box.width, box.height * 0.9])
+                    0.2, box.width, box.height * 0.8])
     ax.legend(custom_lines, machine_names, bbox_to_anchor=(
-        0.5, -0.05), ncol=len(machine_names))
+        0.5, -0.15), ncol=len(machine_names))
 
     ax.set_xticks(range(date.size))
     ax.set_xticklabels([ts.strftime('%d/%m') if ts.year != date[idx-1].year
@@ -195,11 +196,11 @@ def multi_line(val_b, val_a, val_c, val_d, date, tag):
         plt.gca().xaxis.set_major_formatter(dtFmt)
 
         # Add title
-        plt.title(column, loc='center', fontsize=12,
+        plt.title(column, loc='center', fontsize=16,
                   fontweight=0)
 
         plt.xticks(rotation=45)
-        plt.tick_params(labelsize='8',)
+        plt.tick_params(labelsize='16',)
 
         plt.tight_layout()
         plt.box(False)
@@ -222,11 +223,11 @@ def hisoric_multi(values, tag):
         plt.bar(y_pos, values[column], color=palette_list[num])
         add_value_labels(plt.gca())
 
-        plt.title(machine_names[num], loc='center', fontsize=12,
+        plt.title(machine_names[num], loc='center', fontsize=16,
                   fontweight=0)
 
         plt.xticks()
-        plt.tick_params(labelsize='8')
+        plt.tick_params(labelsize='16')
 
         plt.gca().set_xticks(range(values.index.size))
         plt.gca().set_xticklabels([ts.strftime('%b - %Y') if ts.year != values.index[idx-1].year
@@ -253,11 +254,11 @@ def hisoric_multi_percent(values, tag='test', avail=False):
         plt.bar(y_pos, values[column], color=palette_list[num])
         add_value_labels(plt.gca(), True)
 
-        plt.title(machine_names[num], loc='center', fontsize=12,
+        plt.title(machine_names[num], loc='center', fontsize=16,
                   fontweight=0)
 
         plt.xticks()
-        plt.tick_params(labelsize='8')
+        plt.tick_params(labelsize='16')
 
         plt.gca().set_xticks(range(values.index.size))
         plt.gca().set_xticklabels([ts.strftime('%b - %Y') if ts.year != values.index[idx-1].year
@@ -298,9 +299,10 @@ def pie_chart(values, tag):
 
     # Create a pieplot
     plt.pie(pie_vals, labeldistance=1.15, colors=palette_list,
-            startangle=0, autopct='%1.0f%%', pctdistance=1.1)
+            startangle=0, autopct='%1.0f%%', pctdistance=1.1, textprops={'fontsize': 22})
     plt.legend(names, loc="lower center",
-               bbox_to_anchor=(0.5, 0), ncol=len(names))
+               bbox_to_anchor=(0.5, -0.15), ncol=len(names))
+    plt.title(tag)
     plt.tight_layout()
     # Show the graph
 
@@ -321,7 +323,7 @@ def donut_chart(values, tag):
     p.gca().add_artist(my_circle)
     plt.text(0, 0, sum(values), ha='center', va='center')
     plt.legend(custom_lines, machine_names, loc="lower center",
-               bbox_to_anchor=(0.5, 0), ncol=len(machine_names))
+               bbox_to_anchor=(0.5, -0.15), ncol=len(machine_names))
     plt.tight_layout()
 
     plt.savefig('./output/img/donut_chart_' + tag + '.pdf')
@@ -369,5 +371,6 @@ def add_value_labels(ax, percent=False, spacing=5):
             xytext=(0, space),          # Vertically shift label by `space`
             textcoords="offset points",  # Interpret `xytext` as offset in points
             ha='center',                # Horizontally center label
+            fontsize=16,
             va=va)                      # Vertically align label differently for
         # positive and negative values.
