@@ -82,7 +82,7 @@ def single_linechart(val_b, val_a, val_c, val_d, date, tag):
     plt.xticks(rotation=45)
 
     # save plot
-    plt.savefig('./output/img/single_linechart_' + tag + '.svg')
+    plt.savefig('./output/img/single_linechart_' + tag + '.pdf')
     plt.clf()
 
 # barplot to display daily values for each machine
@@ -101,7 +101,7 @@ def historic_single_barplot(values, tag):
     add_value_labels(plt.gca())
 
     plt.box(False)
-    plt.savefig('./output/img/historic_single_bar_' + tag + '.svg')
+    plt.savefig('./output/img/historic_single_bar_' + tag + '.pdf')
     plt.clf()
 
 
@@ -150,7 +150,7 @@ def daily_barplot(val_b, val_a, val_c, val_d, date, tag, percentage=False, avail
 
     plt.box(False)
     plt.xticks(rotation=45)
-    plt.savefig('./output/img/daily_barplot_' + tag + '.svg')
+    plt.savefig('./output/img/daily_barplot_' + tag + '.pdf')
     plt.clf()
 
 # barplot to display monthly averages for each machine
@@ -203,7 +203,7 @@ def multi_line(val_b, val_a, val_c, val_d, date, tag):
     plt.text(0.06, 0.5, 'Note', ha='center', va='center', rotation='vertical')
 
     # Save the plots
-    plt.savefig('./output/img/multiline_' + tag + '.svg')
+    plt.savefig('./output/img/multiline_' + tag + '.pdf')
     plt.clf()
 
 
@@ -232,7 +232,7 @@ def hisoric_multi(values, tag):
         plt.box(False)
         num = num + 1
 
-    plt.savefig('./output/img/historic_multi_' + tag + '.svg')
+    plt.savefig('./output/img/historic_multi_' + tag + '.pdf')
 
     plt.clf()
 
@@ -265,7 +265,7 @@ def hisoric_multi_percent(values, tag='test', avail=False):
         plt.tight_layout()
         plt.box(False)
         num = num + 1
-    plt.savefig('./output/img/historic_multi_' + tag + '.svg')
+    plt.savefig('./output/img/historic_multi_' + tag + '.pdf')
 
     plt.clf()
 
@@ -298,7 +298,7 @@ def pie_chart(values, tag):
     plt.tight_layout()
     # Show the graph
 
-    plt.savefig('./output/img/pie_chart_' + tag + '.svg')
+    plt.savefig('./output/img/pie_chart_' + tag + '.pdf')
     plt.clf()
 
 
@@ -316,7 +316,7 @@ def donut_chart(values, tag):
                bbox_to_anchor=(0.5, 0), ncol=len(machine_names))
     plt.tight_layout()
 
-    plt.savefig('./output/img/donut_chart_' + tag + '.svg')
+    plt.savefig('./output/img/donut_chart_' + tag + '.pdf')
     plt.clf()
 
 
