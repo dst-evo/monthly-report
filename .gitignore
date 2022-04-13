@@ -332,6 +332,7 @@ _minted*
 
 # svg
 svg-inkscape/
+*.svg
 
 # sympy
 *.sout
@@ -433,4 +434,7 @@ TSWLatexianTemp*
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
+
+report_generator/output/img/*
+!report_generator/output/img/logovpm.jpg
 
