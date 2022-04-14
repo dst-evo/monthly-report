@@ -45,13 +45,6 @@ def get_ws_pm():
 
     return(working_hours*3600)
 
-# TODO: write function to calculate total:
-#           Produced Packages
-#           Time in each machine state
-#           Absolute bad boxes
-#           relative bad boxes
-#
-
 
 def calculate_totals(df_a, df_b, df_c, df_d):
     df_total = pd.concat([df_a, df_b, df_c, df_d])
