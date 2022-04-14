@@ -105,7 +105,7 @@ img_generator.multi_line(df_b['machine_tp_cmc'], df_a['machine_tp_cmc'],
 
 # average bph per machine month over month according to CMC
 img_generator.hisoric_multi(
-    df_historic[['bph_avg_b', 'bph_avg_a', 'bph_avg_c', 'bph_avg_d']], 'm_tp_cmc_avg')
+    df_historic[['bph_avg_cmc_b', 'bph_avg_cmc_a', 'bph_avg_cmc_c', 'bph_avg_cmc_d']], 'm_tp_cmc_avg')
 
 # Total time divided into different states of the maschine
 img_generator.pie_chart(
