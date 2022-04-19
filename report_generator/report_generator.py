@@ -1,4 +1,5 @@
 # import libraries
+from asyncio import subprocess
 import string
 import pandas as pd
 import numpy as np
@@ -183,3 +184,5 @@ img_generator.hisoric_multi_percent(
 
 # ----------------------------------------------------------- #
 os.system('CLS')
+print('try compiling latex')
+subprocess.check_call(['lualatex', 'output/monthly_report.tex'])
