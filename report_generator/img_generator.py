@@ -129,7 +129,6 @@ def daily_barplot(val_b, val_a, val_c, val_d, date, tag, percentage=False, avail
             ax.set_ylim(bottom=0, top=600)
         else:
             ax.set_ylim(bottom=0, top=10000)
-    print(val_b, tag)
     ax.bar(x-(barWidth*1.5), val_b, width=barWidth, label='L1 - VPM B (4958)',
            color=palette_lc(0))
     ax.bar(x-(barWidth*0.5), val_a, width=barWidth, label='L2 - VPM A (4959)',
@@ -212,7 +211,6 @@ def multi_line(val_b, val_a, val_c, val_d, date, tag):
 
 
 def hisoric_multi(values, tag):
-    print(values)
     y_pos = np.arange(len(values))
     num = 0
     for column in values:
@@ -242,7 +240,6 @@ def hisoric_multi(values, tag):
 
 
 def hisoric_multi_percent(values, tag='test', avail=False):
-    print(values)
     y_pos = np.arange(len(values))
     num = 0
     y_max = []
