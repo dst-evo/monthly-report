@@ -1,0 +1,8 @@
+###### The following libraries are required to automatically generate the report ######
+pandas
+numpy
+matplotlib
+datetime
+os
+subprocess
+math
