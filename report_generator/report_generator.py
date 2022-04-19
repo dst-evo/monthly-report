@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager
 import datetime as dt
+import os
 
 
 # import scripts
@@ -13,7 +14,8 @@ import img_generator
 
 tags = ['L1 - VPM B (4958)', 'L2 - VPM A (4959)',
         'L3 - VPM C (4960)', 'L4 - VPM D (4961)']
-
+os.system('CLS')
+print('gathering historical data')
 # !!YOU HAVE TO ADJUST THIS BY HAND UNTIL API IS AVAILABLE!!
 # Historic Values to compare month over month
 # ----------------------------------------------------------- #
@@ -38,7 +40,8 @@ hv_avg_avail_d = [0.92, 0.918, 0.913]
 # create date range for the months since start of year
 dates = pd.date_range(start="2022-01-01", end=dt.date.today().replace(day=1) - dt.timedelta(days=1),
                       freq='MS')
-
+os.system('CLS')
+print('creating historical dataframe')
 # create dataframe with all historic values, date as index
 historic = {
     'total': hv_total,
@@ -61,6 +64,8 @@ historic = {
 }
 df_historic = pd.DataFrame(historic, index=dates)
 
+os.system('CLS')
+print('converting csv-files to dataframes')
 # create dataframes from .csv-files for each machine
 df_a = pd.read_csv(r'./aggregate_data/aggregate_data_a.csv',
                    sep=';', parse_dates=['date'], index_col=['date'])
@@ -73,45 +78,64 @@ df_d = pd.read_csv(r'./aggregate_data/aggregate_data_d.csv',
 
 df_total = calculations.calculate_totals(df_a, df_b, df_c, df_d)
 
-
+os.system('CLS')
 # Create Plots for various datapoints
 # ----------------------------------------------------------- #
 # total produced boxes per day
+print('Printernoises brrrrrrrrrrrrrrrrr\n|█---------------|')
 img_generator.single_linechart(df_b['produced_boxes'], df_a['produced_boxes'],
                                df_c['produced_boxes'], df_d['produced_boxes'], df_a.index, 'pb_tot')
 #
 # produced per day and machine
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|██--------------|')
 img_generator.daily_barplot(df_b['produced_boxes'], df_a['produced_boxes'],
                             df_c['produced_boxes'], df_d['produced_boxes'], df_a.index, 'pb')
 
 # Donut chart of total Produced Boxes per machine
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|███-------------|')
 img_generator.donut_chart(df_total[9:13], 'total_box_pm')
 
 # total produced boxes month over month
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|████------------|')
 img_generator.historic_single_barplot(df_historic['total'], 'total')
 
 
 # throughput per day and machine
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|█████-----------|')
 img_generator.multi_line(df_b['machine_tp'], df_a['machine_tp'],
                          df_c['machine_tp'], df_d['machine_tp'], df_a.index, 'm_tp')
 
 # average bph per machine month over month
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|██████----------|')
 img_generator.hisoric_multi(
     df_historic[['bph_avg_b', 'bph_avg_a', 'bph_avg_c', 'bph_avg_d']], 'm_tp_avg')
 
 # throughput per day and machine according to CMC
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|███████---------|')
 img_generator.multi_line(df_b['machine_tp_cmc'], df_a['machine_tp_cmc'],
                          df_c['machine_tp_cmc'], df_d['machine_tp_cmc'], df_a.index, 'm_tp_cmc')
 
 # average bph per machine month over month according to CMC
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|████████--------|')
 img_generator.hisoric_multi(
     df_historic[['bph_avg_cmc_b', 'bph_avg_cmc_a', 'bph_avg_cmc_c', 'bph_avg_cmc_d']], 'm_tp_cmc_avg')
 
 # Total time divided into different states of the maschine
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|█████████-------|')
 img_generator.pie_chart(
     df_d[['run_time', 'idle_time', 'error_time', 'corr_maint_time', 'prev_maint_time']], 'Total')
 
 # relative time in each machine state (or machine turned off/unknown state)
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|██████████------|')
 img_generator.pie_chart(
     df_b[['run_time', 'idle_time', 'error_time', 'corr_maint_time', 'prev_maint_time']], tags[0])
 img_generator.pie_chart(
@@ -122,27 +146,40 @@ img_generator.pie_chart(
     df_d[['run_time', 'idle_time', 'error_time', 'corr_maint_time', 'prev_maint_time']], tags[3])
 
 # absolute total bad boxes per day
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|███████████-----|')
 img_generator.single_linechart(df_b['abs_bad_boxes'], df_a['abs_bad_boxes'],
                                df_c['abs_bad_boxes'], df_d['abs_bad_boxes'], df_a.index, 'abs_bb_tot')
 
 # absolute bad boxes per day and machine
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|████████████----|')
 img_generator.daily_barplot(df_b['abs_bad_boxes'], df_a['abs_bad_boxes'],
                             df_c['abs_bad_boxes'], df_d['abs_bad_boxes'], df_a.index, 'abs_bb_pm', isbb=True)
 
 # relative bad boxes per day and machine
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|█████████████---|')
 img_generator.daily_barplot(df_b['rel_bad_boxes'], df_a['rel_bad_boxes'],
                             df_c['rel_bad_boxes'], df_d['rel_bad_boxes'], df_a.index, 'rel_bb_pm', True, False)
 
 # relative bad boxes average month over month
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|██████████████--|')
 img_generator.hisoric_multi_percent(
     df_historic[['bbm_b', 'bbm_a', 'bbm_c', 'bbm_d']], 'bbm', False)
 
 # daily availability per day and machine
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|███████████████-|')
 img_generator.daily_barplot(df_b['op_avail'], df_a['op_avail'],
                             df_c['op_avail'], df_d['op_avail'], df_a.index, 'op_avail', True, True)
 
 # average availability per machine month over month
+os.system('CLS')
+print('Printernoises brrrrrrrrrrrrrrrrr\n|████████████████|')
 img_generator.hisoric_multi_percent(
     df_historic[['avg_avail_b', 'avg_avail_a', 'avg_avail_c', 'avg_avail_d']], 'avg_avail', True)
 
 # ----------------------------------------------------------- #
+os.system('CLS')
