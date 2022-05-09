@@ -101,7 +101,7 @@ def historic_single_barplot(values, tag):
 
 def daily_barplot(val_b, val_a, val_c, val_d, date, tag, percentage=False, avail=True, isbb=False):
     x = np.arange(len(date))
-    barWidth = 0.3
+    barWidth = 0.2
     fig, ax = plt.subplots()
     if percentage:
         ax.yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
