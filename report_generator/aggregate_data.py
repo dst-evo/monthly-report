@@ -3,6 +3,7 @@ import pandas as pd
 # create empty dataframe to be filled with data
 df = pd.DataFrame()
 
+print("Read raw data files")
 # Read date
 df['date'] = pd.read_csv("./raw_data/Produced boxes.csv",
                          usecols=['DateTime'], sep=';')
@@ -66,6 +67,7 @@ df_c = df[df['machine_id'] == 'L3 - VPM C (4960)']
 df_d = df[df['machine_id'] == 'L4 - VPM D (4961)']
 
 # create csv file from each machine dataframe
+print("Create data file for each machine")
 with open('./aggregate_data/aggregate_data_b.csv', 'a') as f:
     df_b.to_csv(f, header=True, sep=';')
 
