@@ -271,7 +271,7 @@ def pie_chart(values, tag):
     for x in values:
         pie_vals.append(calculations.convert_to_seconds(values[x]))
         names.append(x)
-
+    pie_vals[0] = pie_vals[0] - pie_vals[1]
     pie_vals.append(calculations.get_ws_pm() - sum(pie_vals))
     names.append('undefined_time')
 
