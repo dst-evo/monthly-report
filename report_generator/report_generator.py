@@ -128,7 +128,7 @@ ig.hisoric_multi(
 os.system('CLS')
 print('Printernoises brrrrrrrrrrrrrrrrr\n|█████████-------|')
 ig.pie_chart(
-    df_d[['run_time', 'idle_time', 'error_time', 'corr_maint_time', 'prev_maint_time']], 'Total')
+    df_total[['run_time', 'idle_time', 'error_time', 'corr_maint_time', 'prev_maint_time']], 'Total')
 
 # relative time in each machine state (or machine turned off/unknown state)
 os.system('CLS')
