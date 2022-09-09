@@ -87,8 +87,8 @@ def historic_single_barplot(values, tag):
     y_pos = np.arange(len(values))
     plt.bar(y_pos, values, color=palette_list[4])
     plt.gca().set_xticks(range(values.index.size))
-    plt.gca().set_xticklabels([ts.strftime('%b - %Y') if ts.year != values.index[idx-1].year
-                               else ts.strftime('%b - %Y') for idx, ts in enumerate(values.index)])
+    plt.gca().set_xticklabels([ts.strftime('%b') if ts.year != values.index[idx-1].year
+                               else ts.strftime('%b') for idx, ts in enumerate(values.index)])
     add_value_labels(plt.gca())
 
     plt.tight_layout()
@@ -215,8 +215,8 @@ def hisoric_multi(values, tag):
         plt.tick_params(labelsize='16')
 
         plt.gca().set_xticks(range(values.index.size))
-        plt.gca().set_xticklabels([ts.strftime('%b - %Y') if ts.year != values.index[idx-1].year
-                                   else ts.strftime('%b - %Y') for idx, ts in enumerate(values.index)])
+        plt.gca().set_xticklabels([ts.strftime('%b') if ts.year != values.index[idx-1].year
+                                   else ts.strftime('%b') for idx, ts in enumerate(values.index)])
 
         plt.ylim(0, 750)
 
@@ -245,8 +245,8 @@ def hisoric_multi_percent(values, tag='test', avail=False):
         plt.tick_params(labelsize='16')
 
         plt.gca().set_xticks(range(values.index.size))
-        plt.gca().set_xticklabels([ts.strftime('%b - %Y') if ts.year != values.index[idx-1].year
-                                   else ts.strftime('%b - %Y') for idx, ts in enumerate(values.index)])
+        plt.gca().set_xticklabels([ts.strftime('%b') if ts.year != values.index[idx-1].year
+                                   else ts.strftime('%b') for idx, ts in enumerate(values.index)])
         plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1.0))
 
         if avail:
@@ -269,11 +269,15 @@ def pie_chart(values, tag):
     names = []
     num = 0
     for x in values:
-        pie_vals.append(calculations.convert_to_seconds(values[x]))
+        if tag != 'Total':
+            pie_vals.append(calculations.convert_to_seconds(values[x]))
+        else:
+            pie_vals.append(values.iloc[0][x])
         names.append(x)
     pie_vals[0] = pie_vals[0] - pie_vals[1]
-    pie_vals.append(calculations.get_ws_pm() - sum(pie_vals))
-    names.append('undefined_time')
+    if tag != 'Total':
+        pie_vals.append(calculations.get_ws_pm() - sum(pie_vals))
+        names.append('undefined_time')
 
     for x in names:
         names[num] = x.split('_', 1)[0]
