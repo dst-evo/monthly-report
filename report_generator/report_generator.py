@@ -16,23 +16,23 @@ print('gathering historical data')
 # !!YOU HAVE TO ADJUST THIS BY HAND UNTIL API IS AVAILABLE!!
 # Historic Values to compare month over month
 # ----------------------------------------------------------- #
-hv_total = [499634, 390405, 430625, 386275]
-hv_bph_avg_b = [463, 471, 511, 470]
-hv_bph_avg_a = [564, 508, 508, 504]
-hv_bph_avg_c = [473, 440, 490, 485]
-hv_bph_avg_d = [490, 447, 522, 541]
-hv_bph_avg_cmc_b = [598, 616, 621, 604]
-hv_bph_avg_cmc_a = [744, 731, 713, 709]
-hv_bph_avg_cmc_c = [670, 664, 632, 634]
-hv_bph_avg_cmc_d = [663, 681, 685, 706]
-hv_bbm_b = [0.0544, 0.0387, 0.0455, 0.0488]
-hv_bbm_a = [0.0282, 0.0276, 0.0342, 0.0327]
-hv_bbm_c = [0.034, 0.0395, 0.0355, 0.0354]
-hv_bbm_d = [0.0261, 0.027, 0.0218, 0.0203]
-hv_avg_avail_b = [0.873, 0.911, 0.863, 0.865]
-hv_avg_avail_a = [0.915, 0.925, 0.904, 0.883]
-hv_avg_avail_c = [0.886, 0.898, 0.878, 0.878]
-hv_avg_avail_d = [0.92, 0.918, 0.913, 0.934]
+hv_total = [499634, 390405, 430625, 386275, 413301, 409882, 388122]
+hv_bph_avg_b = [463, 471, 511, 470, 494, 419, 373]
+hv_bph_avg_a = [564, 508, 508, 504, 501, 477, 523]
+hv_bph_avg_c = [473, 440, 490, 485, 491, 417, 428]
+hv_bph_avg_d = [490, 447, 522, 541, 502, 457, 472]
+hv_bph_avg_cmc_b = [598, 616, 621, 604, 608, 548, 499]
+hv_bph_avg_cmc_a = [744, 731, 713, 709, 682, 641, 706]
+hv_bph_avg_cmc_c = [670, 664, 632, 634, 636, 570, 678]
+hv_bph_avg_cmc_d = [663, 681, 685, 706, 651, 622, 663]
+hv_bbm_b = [0.0544, 0.0387, 0.0455, 0.0488, 0.0477, 0.055, 0.0510]
+hv_bbm_a = [0.0282, 0.0276, 0.0342, 0.0327, 0.0346, 0.0407, 0.0277]
+hv_bbm_c = [0.034, 0.0395, 0.0355, 0.0354, 0.0341, 0.0346, 0.0208]
+hv_bbm_d = [0.0261, 0.027, 0.0218, 0.0203, 0.0265, 0.0255, 0.0224]
+hv_avg_avail_b = [0.873, 0.911, 0.863, 0.865, 0.877, 0.849, 0.8610]
+hv_avg_avail_a = [0.915, 0.925, 0.904, 0.883, 0.879, 0.867, 0.9110]
+hv_avg_avail_c = [0.886, 0.898, 0.878, 0.878, 0.893, 0.888, 0.9150]
+hv_avg_avail_d = [0.92, 0.918, 0.913, 0.934, 0.907, 0.905, 0.9270]
 # ----------------------------------------------------------- #
 # create date range for the months since start of year
 dates = pd.date_range(start="2022-01-01", end=dt.date.today().replace(day=1) - dt.timedelta(days=1),
@@ -73,7 +73,7 @@ df_c = pd.read_csv(r'./aggregate_data/aggregate_data_c.csv',
 df_d = pd.read_csv(r'./aggregate_data/aggregate_data_d.csv',
                    sep=';', parse_dates=['date'], index_col=['date'])
 
-df_total = calc.calculate_totals(df_a, df_b, df_c, df_d)
+df_total, df_donut = calc.calculate_totals(df_a, df_b, df_c, df_d)
 
 os.system('CLS')
 # Create Plots for various datapoints
@@ -92,7 +92,7 @@ ig.daily_barplot(df_b['produced_boxes'], df_a['produced_boxes'],
 # Donut chart of total Produced Boxes per machine
 os.system('CLS')
 print('Printernoises brrrrrrrrrrrrrrrrr\n|███-------------|')
-ig.donut_chart(df_total[9:13], 'total_box_pm')
+ig.donut_chart(df_donut[9:13], 'total_box_pm')
 
 # total produced boxes month over month
 os.system('CLS')
@@ -128,7 +128,7 @@ ig.hisoric_multi(
 os.system('CLS')
 print('Printernoises brrrrrrrrrrrrrrrrr\n|█████████-------|')
 ig.pie_chart(
-    df_total[['run_time', 'idle_time', 'error_time', 'corr_maint_time', 'prev_maint_time']], 'Total')
+    df_total[['run_time', 'idle_time', 'error_time', 'corr_maint_time', 'prev_maint_time', 'undefined_time']], 'Total')
 
 # relative time in each machine state (or machine turned off/unknown state)
 os.system('CLS')
