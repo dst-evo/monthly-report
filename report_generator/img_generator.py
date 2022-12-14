@@ -49,6 +49,20 @@ machine_names = ['L1 - VPM B (4958)', 'L2 - VPM A (4959)',
 
 
 def single_linechart(val_b, val_a, val_c, val_d, date, tag):
+    """
+    Create a single line chart with the given values and date.
+
+    Args:
+        val_b: A dataframe containing the values for line b.
+        val_a: A dataframe containing the values for line a.
+        val_c: A dataframe containing the values for line c.
+        val_d: A dataframe containing the values for line d.
+        date: A list of dates to use as x-axis tick labels.
+        tag: A tag to use when saving the chart to a file. 
+
+    Returns:
+        None
+    """
     x = np.arange(len(date))
 
     fig, ax = plt.subplots()
@@ -82,13 +96,22 @@ def single_linechart(val_b, val_a, val_c, val_d, date, tag):
 #   absolut bad boxes per day and machine
 #   relative bad boxes per day and machine
 
-
 def historic_single_barplot(values, tag):
+    """
+    Create a single bar plot with the given values.
+
+    Args:
+        values: A pandas dataframe containing the values to plot.
+        tag: A tag to use when saving the plot to a file.
+
+    Returns:
+        None
+    """
     y_pos = np.arange(len(values))
     plt.bar(y_pos, values, color=palette_list[4])
     plt.gca().set_xticks(range(values.index.size))
-    plt.gca().set_xticklabels([ts.strftime('%b') if ts.year != values.index[idx-1].year
-                               else ts.strftime('%b') for idx, ts in enumerate(values.index)])
+    plt.gca().set_xticklabels([ts.strftime('%b - %Y') if ts.year != values.index[idx-1].year
+                               else ts.strftime('%b - %Y') for idx, ts in enumerate(values.index)])
     add_value_labels(plt.gca())
 
     plt.tight_layout()
@@ -268,22 +291,37 @@ def pie_chart(values, tag):
     pie_vals = []
     names = []
     num = 0
-    for x in values:
-        if tag != 'Total':
-            pie_vals.append(calculations.convert_to_seconds(values[x]))
-        else:
-            pie_vals.append(values.iloc[0][x])
-        names.append(x)
-    pie_vals[0] = pie_vals[0] - pie_vals[1]
     if tag != 'Total':
+        for x in values:
+            pie_vals.append(calculations.convert_to_seconds(values[x]))
+            names.append(x)
+        print(tag)
+        print('sum_pie_vals:')
+        print(sum(pie_vals))
         pie_vals.append(calculations.get_ws_pm() - sum(pie_vals))
+        print('ws_pm:')
+        print(calculations.get_ws_pm())
+
         names.append('undefined_time')
+    elif tag == 'Total':
+        names = ['run_time', 'idle_time', 'error_time',
+                 'corr_maint_time', 'prev_maint_time', 'undefined_time']
+        pie_vals = values
+        print(tag)
+        print('ws_pm:')
+        print(4 * calculations.get_ws_pm())
+        print('sum_pie_vals:')
+        print(sum(pie_vals))
+        pie_vals.append((4 * calculations.get_ws_pm()) - sum(pie_vals))
 
     for x in names:
         names[num] = x.split('_', 1)[0]
         names[num] = names[num].title()
         num = num + 1
-
+    print('pie_vals:')
+    print(pie_vals)
+    print('names:')
+    print(names)
     # Create a pieplot
     plt.pie(pie_vals, labeldistance=1.15, colors=palette_list,
             startangle=0, autopct='%1.0f%%', pctdistance=1.1, textprops={'fontsize': 22})

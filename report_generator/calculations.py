@@ -16,6 +16,8 @@ def convert_to_seconds(values):
     for x in values:
         h, m = x.split(':')
         total += int(h) * 3600 + int(m) * 60
+
+    print(total)
     return total
 
 
@@ -30,6 +32,7 @@ def get_ws_pm():
     today = datetime.date.today()
     first = today.replace(day=1)
     lastMonth = first - datetime.timedelta(days=1)
+    lastMonth.month
     working_hours = 0
     for i in range(1, 32):
         try:
@@ -38,53 +41,38 @@ def get_ws_pm():
             break
         if thisdate.weekday() < 5:  # Monday == 0, Sunday == 6
             working_hours += 18
-        if thisdate.weekday() == 5:
-            working_hours += 9
-
+        if (lastMonth.month in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]):
+            if thisdate.weekday() == 5:
+                working_hours += 9
+        elif lastMonth.month == 11:
+            if thisdate.weekday() == 5:
+                working_hours += 18
+        elif lastMonth.month == 12:
+            if (thisdate.weekday() in [5, 6]):
+                working_hours += 18
+    #print(working_hours * 3600)
     return(working_hours*3600)
 
 
 def calculate_totals(df_a, df_b, df_c, df_d):
     df_total = pd.concat([df_a, df_b, df_c, df_d])
-    df_temp = []
-    df_donut = []
+    df_return = []
     percentage_to_float(df_total)
     # calculate total boxes
-    df_temp.append(sum(df_total['produced_boxes']))
-    df_temp.append(convert_to_seconds(df_total['run_time']))
-    df_temp.append(convert_to_seconds(df_total['idle_time']))
-    df_temp.append(convert_to_seconds(df_total['error_time']))
-    df_temp.append(convert_to_seconds(df_total['corr_maint_time']))
-    df_temp.append(convert_to_seconds(df_total['prev_maint_time']))
-    df_temp.append(get_ws_pm() * 4 - sum(df_temp[1:5]))
-    df_temp.append(sum(df_total['abs_bad_boxes']))
-    df_temp.append(df_total.where(df_total['run_time'] > '01:00')[
-        'rel_bad_boxes'].mean())
-    df_donut.append(sum(df_total['produced_boxes']))
-    df_donut.append(convert_to_seconds(df_total['run_time']))
-    df_donut.append(convert_to_seconds(df_total['idle_time']))
-    df_donut.append(convert_to_seconds(df_total['error_time']))
-    df_donut.append(convert_to_seconds(df_total['corr_maint_time']))
-    df_donut.append(convert_to_seconds(df_total['prev_maint_time']))
-    df_donut.append(get_ws_pm() * 4 - sum(df_donut[1:5]))
-    df_donut.append(sum(df_total['abs_bad_boxes']))
-    df_donut.append(df_total.where(df_total['run_time'] > '01:00')[
-        'rel_bad_boxes'].mean())
-    df_donut.append(sum(df_b['produced_boxes']))
-    df_donut.append(sum(df_a['produced_boxes']))
-    df_donut.append(sum(df_c['produced_boxes']))
-    df_donut.append(sum(df_d['produced_boxes']))
-
-    insert = {
-        'produced_boxes': df_temp[0],
-        'run_time': df_temp[1],
-        'idle_time': df_temp[2],
-        'error_time': df_temp[3],
-        'corr_maint_time': df_temp[4],
-        'prev_maint_time': df_temp[5],
-        'undefined_time': get_ws_pm() * 4 - sum(df_temp[1:5])
-    }
-    df_return = pd.DataFrame(insert, index=[0])
-    return df_return, df_donut
+    df_return.append(sum(df_total['produced_boxes']))
+    df_return.append(convert_to_seconds(df_total['run_time']))
+    df_return.append(convert_to_seconds(df_total['idle_time']))
+    df_return.append(convert_to_seconds(df_total['error_time']))
+    df_return.append(convert_to_seconds(df_total['corr_maint_time']))
+    df_return.append(convert_to_seconds(df_total['prev_maint_time']))
+    df_return.append(get_ws_pm() * 4 - sum(df_return[1:5]))
+    df_return.append(sum(df_total['abs_bad_boxes']))
+    df_return.append(df_total.where(df_total['run_time'] > '01:00')[
+                     'rel_bad_boxes'].mean())
+    df_return.append(sum(df_b['produced_boxes']))
+    df_return.append(sum(df_a['produced_boxes']))
+    df_return.append(sum(df_c['produced_boxes']))
+    df_return.append(sum(df_d['produced_boxes']))
+    return df_return
 
     #pd.DataFrame({'Name': [], 'Value': []})
