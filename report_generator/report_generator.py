@@ -45,7 +45,7 @@ hv_avg_avail_d = [0.92, 0.918, 0.913, 0.934,
                   0.907, 0.905, 0.9270, 0.889, 0.929, 0.916, 0.905]
 # ----------------------------------------------------------- #
 # create date range for the months since start of year
-dates = pd.date_range(start="2022-01-01", end=dt.date.today().replace(day=1) - dt.timedelta(days=1),
+dates = pd.date_range(start="2022-05-01", end=dt.date.today().replace(day=1) - dt.timedelta(days=1),
                       freq='MS')
 os.system('CLS')
 print('creating historical dataframe')
