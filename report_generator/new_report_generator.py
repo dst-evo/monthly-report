@@ -13,17 +13,18 @@
 # with help of some special people
 
 # load Libraries
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.colors as colors
+import seaborn as sns
 from matplotlib.lines import Line2D
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # set global plt parameters
-# ------------------------------------------------------------------------------
-plt.rcParams['figure.figsize'] = [16.0, 9.0]
+# -----------------------------------------------------------------------------
+plt.rcParams['figure.figsize'] = [16.0, 9.0]  # [16.0, 9.0]
 plt.rcParams['figure.dpi'] = 300
 plt.rcParams['font.family'] = 'Europa-Regular'
 plt.rcParams['axes.grid'] = True
@@ -33,10 +34,10 @@ plt.rcParams['legend.frameon'] = False
 plt.rcParams['legend.loc'] = 'upper center'
 plt.rcParams['lines.linewidth'] = 3.5
 plt.rcParams['font.size'] = 22
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # define colors and names for the plots
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # define color map
 palette_lc = colors.ListedColormap(
     ['#FDE725',
@@ -66,23 +67,29 @@ machine_names = ['L1 - VPM B (4958)',
                  'L3 - VPM C (4960)',
                  'L4 - VPM D (4961)',
                  ]
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # read csv files from local storage
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 df_current = pd.read_csv('./raw_data/boxes_total_current.csv',
                          delimiter=';',
-                         usecols=['DateTime', 'Machine', 'Boxes'],
+                         usecols=['DateTime',
+                                  'Machine',
+                                  'Boxes',
+                                  ],
                          )
 df_previous = pd.read_csv('./raw_data/boxes_total_previous.csv',
                           delimiter=';',
-                          usecols=['DateTime', 'Machine', 'Boxes'],
+                          usecols=['DateTime',
+                                   'Machine',
+                                   'Boxes',
+                                   ],
                           )
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 
 # Plot total Boxes Year over Year
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Filter rows where Machine is 'Total'
 df_current = df_current[df_current['Machine'] == 'Total']
 df_previous = df_previous[df_previous['Machine'] == 'Total']
@@ -167,18 +174,22 @@ ax.set_title('Comparison of Boxes by Month')
 
 plt.box(False)
 # Show the plot
-# plt.savefig('./test.pdf')
-plt.show()
+plt.savefig('./test_1.pdf')
+# plt.show()
+plt.clf()
 
 # TODO: save plot as pdf to use it in the report
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Make a donut Chart with all Machines and plot the total in the middle
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Filter the rows to include only the desired machines
 df_donut = pd.read_csv('./raw_data/boxes_total_current.csv',
                        delimiter=';',
-                       usecols=['DateTime', 'Machine', 'Boxes'],
+                       usecols=['DateTime',
+                                'Machine',
+                                'Boxes',
+                                ],
                        )
 
 # Filter the rows to include only the last available month
@@ -237,5 +248,86 @@ ax.set_title('Total Boxes for Selected Machines ({})'.format(
 # set axis equal to ensure circle is drawn as a circle
 plt.axis('equal')
 # Show the chart
-plt.show()
-# ------------------------------------------------------------------------------
+plt.savefig('./test_2.pdf')
+# plt.show()
+plt.clf()
+# -----------------------------------------------------------------------------
+
+
+# create a single line chart that shows the total daily produced boxes
+# -----------------------------------------------------------------------------
+df = pd.read_csv('./raw_data/produced_boxes_daily.csv',
+                 delimiter=';',
+                 usecols=['DateTime',
+                          'Machine',
+                          'Boxes',
+                          ],
+                 )
+
+# format DateTime to dd/mm
+df['DateTime'] = pd.to_datetime(df['DateTime'])
+df['DateTime'] = df['DateTime'].dt.strftime('%d/%m')
+
+# filter for Total Values
+total_df = df[df['Machine'] == 'Total']
+
+# create the line plot, move the legend to the bottom
+fig, ax = plt.subplots()
+total_df.plot(x='DateTime', y='Boxes', color=palette_list[4], ax=ax)
+box = ax.get_position()
+ax.set_position([box.x0, box.y0 + box.height * 0.2,
+                 box.width, box.height * 0.8,
+                 ],
+                )
+ax.legend(['Total'],
+          bbox_to_anchor=(0.5, -0.15),
+          ncol=1,
+          )
+plt.box(False)
+plt.xticks(rotation=45)
+
+# shot the chart
+plt.savefig('./test_3.pdf')
+# plt.show()
+plt.clf()
+# -----------------------------------------------------------------------------
+
+
+# create a grouped barplot showing daily produced boxes per machine
+# -----------------------------------------------------------------------------
+# Load data from CSV file
+df = pd.read_csv('./raw_data/produced_boxes_daily.csv',
+                 delimiter=';',
+                 usecols=['DateTime',
+                          'Machine',
+                          'Boxes'],
+                 )
+
+# Format DateTime to dd/mm
+df['DateTime'] = pd.to_datetime(df['DateTime'])
+df['DateTime'] = df['DateTime'].dt.strftime('%d/%m')
+
+# Create grouped barplot with legend at bottom
+fig, ax = plt.subplots()
+sns.barplot(x='DateTime',
+            y='Boxes',
+            hue='Machine',
+            palette=palette_list,
+            data=df[df['Machine'].isin(machine_names)],
+            ax=ax,
+            )
+box = ax.get_position()
+ax.set_position([box.x0, box.y0 + box.height * 0.2,
+                 box.width, box.height * 0.8,
+                 ])
+ax.legend(bbox_to_anchor=(0.5, -0.15),
+          ncol=4,
+          )
+
+plt.box(False)
+plt.xticks(rotation=45)
+
+# show the chart
+plt.savefig('./test_4.pdf')
+# plt.show()
+plt.clf()
