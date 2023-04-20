@@ -16,8 +16,10 @@ plt.rcParams['font.family'] = 'Europa-Regular'
 plt.rcParams['axes.grid'] = True
 plt.rcParams['axes.grid.axis'] = 'y'
 plt.rcParams['axes.axisbelow'] = True
+plt.rcParams['axes.titlesize'] = 0
 plt.rcParams['legend.frameon'] = False
 plt.rcParams['legend.loc'] = 'upper center'
+plt.rcParams['legend.fontsize'] = 14
 plt.rcParams['lines.linewidth'] = 3.5
 plt.rcParams['font.size'] = 22
 
@@ -95,6 +97,7 @@ def single_linechart(val_b, val_a, val_c, val_d, date, tag):
 #   total produced boxes per day and machine
 #   absolut bad boxes per day and machine
 #   relative bad boxes per day and machine
+
 
 def historic_single_barplot(values, tag):
     """

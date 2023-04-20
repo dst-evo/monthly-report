@@ -1,13 +1,7 @@
-# This is Version 2 of the famous Report Generator
-# The general Idea of the programm is the same as before
-# generating a comprehenisve Report about the current
-# Status of the Packing Machines used by Digitec Galaxus AG.
-# Most of the used data is from "Current Month - 1" but some
-# Values are compared month over month and year over year.
-#
-# Required Libraries can be found in "requirements.txt"
-# Since there is currently no API available for the Dashboard
-# the Data has to be downloaded manually.
+# The image generator contains all functions that are
+# used to create the various plots used in the
+# monthly Packing Machine Report. Data is supplied
+# by the Report Generator.
 #
 # writen by dominic stalder (mailto:dominic.stalder@proton.me)
 # with help of some special people
@@ -19,7 +13,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.colors as colors
 import seaborn as sns
-import new_image_generator as ig
 from matplotlib.lines import Line2D
 # -----------------------------------------------------------------------------
 
@@ -63,52 +56,116 @@ custom_lines = [Line2D([0], [0], color=palette_lc(0), lw=8),
                 Line2D([0], [0], color=palette_lc(2), lw=8),
                 Line2D([0], [0], color=palette_lc(3), lw=8),
                 ]
-machine_names = ['L1 - VPM B (4958)',
-                 'L2 - VPM A (4959)',
-                 'L3 - VPM C (4960)',
-                 'L4 - VPM D (4961)',
-                 ]
 # -----------------------------------------------------------------------------
-
-# configure start and enddates
-# -----------------------------------------------------------------------------
-start_date = pd.to_datetime('2022-04-01')
-end_date = pd.to_datetime('2023-03-01')
-# -----------------------------------------------------------------------------
-
-# read csv files from local storage
-# -----------------------------------------------------------------------------
-df_current = pd.read_csv('./raw_data/boxes_total_current.csv',
-                         delimiter=';',
-                         usecols=['DateTime',
-                                  'Machine',
-                                  'Boxes',
-                                  ],
-                         )
-df_previous = pd.read_csv('./raw_data/boxes_total_previous.csv',
-                          delimiter=';',
-                          usecols=['DateTime',
-                                   'Machine',
-                                   'Boxes',
-                                   ],
-                          )
-# -----------------------------------------------------------------------------
-
 
 # Plot total Boxes Year over Year
 # -----------------------------------------------------------------------------
-fig_byoy = ig.plot_boxes_by_month(
-    df_current,
-    df_previous,
-    machine_names,
-    start_date,
-    end_date,
-)
 
-plt.show(fig_byoy)
+
+def plot_boxes_by_month(df_current, df_previous, machine_names, start_date, end_date):
+    """
+     Plot the comparison of boxes by month for two dataframes containing the number of boxes for different machines.
+
+    Args:
+        df_current (pandas.DataFrame): A dataframe containing the current boxes data for the machines.
+        df_previous (pandas.DataFrame): A dataframe containing the previous year boxes data for the machines.
+        machine_names (list): A list of machine names to be plotted.
+        start_date (datetime): A datetime object representing the start date of the desired time period.
+        end_date (datetime): A datetime object representing the end date of the desired time period.
+
+    Returns:
+        matplotlib.figure.Figure: A grouped bar chart comparing the number of boxes for each month and year.
+    """
+
+    # Filter rows where 'Machine' is in the list of Machine Names
+    df_current = df_current[df_current['Machine'].isin(machine_names)]
+    df_previous = df_previous[df_previous['Machine'].isin(machine_names)]
+
+    # Convert DateTime column to pandas datetime format
+    df_current['DateTime'] = pd.to_datetime(df_current['DateTime'])
+    df_previous['DateTime'] = pd.to_datetime(df_previous['DateTime'])
+
+    # Add a year to the DateTime column in df_previous
+    df_previous['DateTime'] = df_previous['DateTime'] + \
+        pd.offsets.DateOffset(years=1)
+
+    # Merge the two dataframes based on DateTime column
+    df_merged = pd.merge(df_current, df_previous, on='DateTime')
+
+    # Rename the columns to differentiate between the two sets of boxes
+    df_merged = df_merged.rename(
+        columns={'Boxes_x': 'Boxes_current', 'Boxes_y': 'Boxes_previous'})
+
+    # Extract the values for the desired time period
+    # start_date = pd.to_datetime('2022-04-01')
+    # end_date = pd.to_datetime('2023-03-01')
+    df_period = df_merged[(df_merged['DateTime'] >= start_date)
+                          & (df_merged['DateTime'] < end_date)]
+
+    # Group by month and year and sum Boxes values for each month and year
+    df_period_monthly = df_period.groupby(
+        pd.Grouper(key='DateTime', freq='M')).sum()
+
+    # Create a grouped bar chart comparing the boxes in each month
+    labels = df_period_monthly.index.strftime('%b')
+    x = np.arange(len(labels))
+    width = 0.35  # the width of the bars
+
+    fig, ax = plt.subplots()
+    # create the two bars
+    rects1 = ax.bar(
+        x - width/2,
+        df_period_monthly['Boxes_previous'],
+        width,
+        color=palette_list[5],
+        label='Previous',
+    )
+    rects2 = ax.bar(
+        x + width/2,
+        df_period_monthly['Boxes_current'],
+        width,
+        color=palette_list[4],
+        label='Current',
+    )
+    # Add y-axis label and legend
+    ax.set_ylabel('Boxes')
+    box = ax.get_position()
+    ax.set_position([box.x0,
+                     box.y0 + box.height * 0.2,
+                     box.width,
+                     box.height * 0.8],
+                    )
+    ax.legend(['Previous', 'Current'],
+              bbox_to_anchor=(0.5, -0.15),
+              ncol=2,
+              )
+
+    # Add text labels to each column
+    for rect in rects1 + rects2:
+        height = rect.get_height()
+        ax.text(rect.get_x() + rect.get_width() / 2,
+                height,
+                int(height),
+                ha='center',
+                va='bottom',
+                fontsize=16,
+                )
+
+    # Set tick labels and title
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels,
+                       rotation=45,
+                       ha='right',
+                       )
+    ax.set_title('Comparison of Boxes by Month')
+
+    plt.box(False)
+    # Show the plot
+    return fig
 
 # TODO: save plot as pdf to use it in the report
 # -----------------------------------------------------------------------------
+
 
 # Make a donut Chart with all Machines and plot the total in the middle
 # -----------------------------------------------------------------------------
