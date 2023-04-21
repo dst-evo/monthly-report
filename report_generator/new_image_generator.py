@@ -50,6 +50,12 @@ palette_list = ['#FDE725',
                 'grey',
                 ]
 
+machine_names = ['L1 - VPM B (4958)',
+                 'L2 - VPM A (4959)',
+                 'L3 - VPM C (4960)',
+                 'L4 - VPM D (4961)',
+                 ]
+
 # define legend style
 custom_lines = [Line2D([0], [0], color=palette_lc(0), lw=8),
                 Line2D([0], [0], color=palette_lc(1), lw=8),
@@ -58,11 +64,10 @@ custom_lines = [Line2D([0], [0], color=palette_lc(0), lw=8),
                 ]
 # -----------------------------------------------------------------------------
 
+
 # Plot total Boxes Year over Year
 # -----------------------------------------------------------------------------
-
-
-def plot_boxes_by_month(df_current, df_previous, machine_names, start_date, end_date):
+def plot_boxes_by_month(df_current, df_previous, machine_names, start_date, end_date, title):
     """
      Plot the comparison of boxes by month for two dataframes containing the number of boxes for different machines.
 
@@ -157,171 +162,241 @@ def plot_boxes_by_month(df_current, df_previous, machine_names, start_date, end_
                        rotation=45,
                        ha='right',
                        )
-    ax.set_title('Comparison of Boxes by Month')
+    ax.set_title(title)
 
-    plt.box(False)
-    # Show the plot
+    # return the figure
     return fig
-
-# TODO: save plot as pdf to use it in the report
 # -----------------------------------------------------------------------------
 
 
 # Make a donut Chart with all Machines and plot the total in the middle
 # -----------------------------------------------------------------------------
-# Filter the rows to include only the desired machines
-df_donut = pd.read_csv('./raw_data/boxes_total_current.csv',
-                       delimiter=';',
-                       usecols=['DateTime',
-                                'Machine',
-                                'Boxes',
-                                ],
-                       )
+def create_donut_chart(df_donut, machine_names, title):
+    """Create a donut chart with the total number of boxes for a given set of machines, based on a pandas DataFrame.
 
-# Filter the rows to include only the last available month
-df_donut['DateTime'] = pd.to_datetime(df_donut['DateTime'])
-last_month = df_donut['DateTime'].max()
-df_last_month = df_donut[df_donut['DateTime'] == last_month]
+    Args:
+        df_donut (pd.DataFrame): A pandas DataFrame containing the data to be plotted.
+        machine_names (List[str]): A list of strings representing the names of the machines to be included in the chart.
+        title (str): A string with the title of the chart.
 
-# Filter the rows to include only the desired machines
-df_machines = df_last_month[df_last_month['Machine'].isin(machine_names)]
+    Returns:
+        plt.Figure: A matplotlib Figure object containing the resulting donut chart.
 
-# Calculate the total number of boxes for the selected machines
-total_boxes = df_machines['Boxes'].sum()
+    Example:
+        >>> df_donut = pd.read_csv('data.csv')
+        >>> create_donut_chart(df_donut, ['Machine A', 'Machine B'], 'Total Boxes for Machines A and B')
+    """
+    # Filter the rows to include only the last available month
+    df_donut['DateTime'] = pd.to_datetime(df_donut['DateTime'])
+    last_month = df_donut['DateTime'].max()
+    df_last_month = df_donut[df_donut['DateTime'] == last_month]
 
-# Create a pie chart with the selected machines
-colors = [c for c in palette_list if c != 'grey']
-fig, ax = plt.subplots()
-wedges, texts, autotexts = ax.pie(df_machines['Boxes'],
-                                  labels=df_machines['Machine'],
-                                  colors=colors,
-                                  autopct='%1.1f%%',
-                                  startangle=90,
-                                  textprops={'fontsize': 14},
-                                  wedgeprops={'linewidth': 7,
-                                              'edgecolor': 'white',
-                                              }
-                                  )
-center_circle = plt.Circle((0, 0),
-                           0.5,
-                           color='white',
-                           )
-fig = plt.gcf()
-fig.gca().add_artist(center_circle)
-plt.setp(autotexts,
-         size=16,
-         weight="bold",
-         )
-plt.setp(texts,
-         size=16,
-         )
+    # Filter the rows to include only the desired machines
+    df_machines = df_last_month[df_last_month['Machine'].isin(machine_names)]
 
-# Add the total number of boxes to the center of the chart
-ax.text(0,
-        0,
-        total_boxes,
-        ha='center',
-        va='center',
-        fontsize=24,
-        )
+    # Calculate the total number of boxes for the selected machines
+    total_boxes = df_machines['Boxes'].sum()
 
-# Set the title of the chart
-ax.set_title('Total Boxes for Selected Machines ({})'.format(
-    last_month.strftime('%b %Y')),
-    fontsize=20,
-)
+    # Create a pie chart with the selected machines
+    colors = [c for c in palette_list if c != 'grey']
+    fig, ax = plt.subplots()
+    wedges, texts, autotexts = ax.pie(df_machines['Boxes'],
+                                      labels=df_machines['Machine'],
+                                      colors=colors,
+                                      autopct='%1.1f%%',
+                                      startangle=90,
+                                      textprops={'fontsize': 14},
+                                      wedgeprops={'linewidth': 7,
+                                                  'edgecolor': 'white',
+                                                  }
+                                      )
+    center_circle = plt.Circle((0, 0),
+                               0.5,
+                               color='white',
+                               )
+    fig = plt.gcf()
+    fig.gca().add_artist(center_circle)
+    plt.setp(autotexts,
+             size=16,
+             weight="bold",
+             )
+    plt.setp(texts,
+             size=16,
+             )
 
-# set axis equal to ensure circle is drawn as a circle
-plt.axis('equal')
-# Show the chart
-plt.savefig('./test_2.pdf')
-# plt.show()
-plt.clf()
+    # Add the total number of boxes to the center of the chart
+    ax.text(0,
+            0,
+            total_boxes,
+            ha='center',
+            va='center',
+            fontsize=24,
+            )
+
+    # Set the title of the chart
+    ax.set_title(title + ' ({})'.format(
+        last_month.strftime('%b %Y')),
+        fontsize=20,
+    )
+
+    # set axis equal to ensure circle is drawn as a circle
+    plt.axis('equal')
+
+    return fig
 # -----------------------------------------------------------------------------
 
 
 # create a single line chart that shows the total daily produced boxes
 # -----------------------------------------------------------------------------
-df = pd.read_csv('./raw_data/produced_boxes_daily.csv',
-                 delimiter=';',
-                 usecols=['DateTime',
-                          'Machine',
-                          'Boxes',
-                          ],
-                 )
+def create_line_plot(df, machine_names, title):
+    """
+    Creates a line plot of box values for a specific machine for each day
+    of the month.
 
-# format DateTime to dd/mm
-df['DateTime'] = pd.to_datetime(df['DateTime'])
-df['DateTime'] = df['DateTime'].dt.strftime('%d/%m')
+    Args:
+    - df (pd.DataFrame): the dataframe containing the data to plot
+    - palette_list (list): a list of colors to use for the plot
+    - machine_name (str): the name of the machine to plot data for
+    - filename (str): the name of the file to save the plot to
 
-# filter for Total Values
-total_df = df[df['Machine'] == 'Total']
+    Returns:
+    - None
+    """
+    # format DateTime to dd/mm
+    df['DateTime'] = pd.to_datetime(df['DateTime'])
+    df['DateTime'] = df['DateTime'].dt.strftime('%d/%m')
 
-# create the line plot, move the legend to the bottom
-fig, ax = plt.subplots()
-total_df.plot(x='DateTime', y='Boxes', color=palette_list[4], ax=ax)
-box = ax.get_position()
-ax.set_position([box.x0, box.y0 + box.height * 0.2,
-                 box.width, box.height * 0.8,
-                 ],
-                )
-ax.legend(['Total'],
-          bbox_to_anchor=(0.5, -0.15),
-          ncol=1,
-          )
-plt.box(False)
-plt.xticks(rotation=45)
+    # filter for the specified machine
+    machine_df = df[df['Machine'] == machine_names]
 
-# shot the chart
-plt.savefig('./test_3.pdf')
-# plt.show()
-plt.clf()
+    # create the line plot, move the legend to the bottom
+    fig, ax = plt.subplots()
+    machine_df.plot(x='DateTime', y='Boxes', color=palette_list[4], ax=ax)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.2,
+                     box.width, box.height * 0.8,
+                     ],
+                    )
+    ax.legend([machine_names],
+              bbox_to_anchor=(0.5, -0.15),
+              ncol=1,
+              )
+    plt.box(False)
+    plt.xticks(rotation=45)
+
+    # TODO:set
+    # save the chart to a file
+    return fig
 # -----------------------------------------------------------------------------
 
 
 # create a grouped barplot showing daily produced boxes per machine
 # -----------------------------------------------------------------------------
-# Load data from CSV file
-df = pd.read_csv('./raw_data/produced_boxes_daily.csv',
-                 delimiter=';',
-                 usecols=['DateTime',
-                          'Machine',
-                          'Boxes'],
-                 )
+def create_grouped_barplot(df_barplot, machine_names, title):
+    """
+    Create a grouped barplot with the total number of boxes for a given set of machines.
 
-# Format DateTime to dd/mm
-df['DateTime'] = pd.to_datetime(df['DateTime'])
-df['DateTime'] = df['DateTime'].dt.strftime('%d/%m')
+    Args:
+        df_barplot (pd.DataFrame): A pandas DataFrame containing the data to be plotted.
+        machine_names (List[str]): A list of strings representing the names of the machines to be included in the chart.
+        title (str): A string with the title of the chart.
 
-# Create grouped barplot with legend at bottom
-fig, ax = plt.subplots()
-sns.barplot(x='DateTime',
-            y='Boxes',
-            hue='Machine',
-            palette=palette_list,
-            data=df[df['Machine'].isin(machine_names)],
-            ax=ax,
-            )
-box = ax.get_position()
-ax.set_position([box.x0, box.y0 + box.height * 0.2,
-                 box.width, box.height * 0.8,
-                 ])
-ax.legend(custom_lines,
-          machine_names,
-          bbox_to_anchor=(0.5, -0.15),
-          ncol=4,
-          )
-# ax.set(xlabel=None)
+    Returns:
+        plt.Figure: A matplotlib Figure object containing the resulting grouped bar plot.
 
-plt.box(False)
-plt.xticks(rotation=45)
+    Example:
+        Create a grouped barplot for machines A and B:
 
-# show the chart
-plt.savefig('./test_4.pdf')
-# plt.show()
-plt.clf()
+        >>> df_barplot = pd.read_csv('data.csv')
+        >>> create_grouped_barplot(df_barplot, ['Machine A', 'Machine B'], 'Total Boxes for Machines A and B')
+    """
+    # Format DateTime to dd/mm
+    df_barplot['DateTime'] = pd.to_datetime(df_barplot['DateTime'])
+    df_barplot['DateTime'] = df_barplot['DateTime'].dt.strftime('%d/%m')
+
+    # Create grouped barplot with legend at bottom
+    fig, ax = plt.subplots()
+    sns.barplot(x='DateTime',
+                y='Boxes',
+                hue='Machine',
+                palette=palette_list,
+                data=df[df['Machine'].isin(machine_names)],
+                ax=ax,
+                )
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.2,
+                     box.width, box.height * 0.8,
+                     ])
+    ax.legend(custom_lines,
+              machine_names,
+              bbox_to_anchor=(0.5, -0.15),
+              ncol=4,
+              )
+    # ax.set(xlabel=None)
+    # TODO: set title
+    plt.box(False)
+    plt.xticks(rotation=45)
+
+    # return the figure
+    return fig
 # -----------------------------------------------------------------------------
 
 
-#
+# create a multiline plot that shows each machine in a subplot
+# -----------------------------------------------------------------------------
+def create_lineplot(df_lineplot, machine_names, title):
+    """
+    Create a set of line plots showing the box counts over time for each machine.
+
+    Args:
+        df (pd.DataFrame): A pandas DataFrame containing the data to be plotted.
+        machine_names (List[str]): A list of strings representing the names of the machines to be included in the chart.
+        palette_list (List[str]): A list of color codes to be used for each machine.
+        title (str): A string with the title of the chart.
+
+    Returns:
+        plt.Figure: A matplotlib Figure object containing the resulting line plots.
+
+    Example:
+        Create a grouped barplot for machines A and B:
+
+        >>> df_lineplot = pd.read_csv('data.csv')
+        >>> create_lineplot(df_barplot, ['Machine A', 'Machine B'], 'Total Boxes for Machines A and B')
+    """
+    # Create a list of subplots
+    fig, axs = plt.subplots(2, 2, figsize=(10, 8), sharey=True)
+
+    # Flatten the axs array to allow for easier iteration
+    axs = axs.flatten()
+
+    # Iterate over each machine name and corresponding color
+    for i, (machine, color) in enumerate(zip(machine_names, palette_list)):
+        # Create a filtered dataframe for the current machine
+        curr_df = df_lineplot[df_lineplot["machine"] == machine]
+
+        # Create a line plot for the current machine
+        axs[i].plot(curr_df["DateTime"], curr_df["Boxes"],
+                    color="lightgrey", linewidth=1)
+        axs[i].plot(curr_df["DateTime"], curr_df["Boxes"],
+                    color=color, linewidth=2)
+
+        # Set the title for the current subplot
+        axs[i].set_title(machine)
+
+        # Set the x-axis label for the current subplot
+        axs[i].set_xlabel("Date")
+
+        # Rotate the x-axis labels for readability
+        axs[i].tick_params(axis="x", rotation=45)
+
+    # Set the y-axis label for the entire figure
+    fig.text(0.04, 0.5, "Boxes", va="center", rotation="vertical")
+
+    # Set the overall title for the entire figure
+    fig.suptitle("Box counts by machine", fontsize=16)
+
+    # Adjust the layout of the subplots to improve readability
+    plt.subplots_adjust(wspace=0.05, hspace=0.3)
+
+    return fig
 # -----------------------------------------------------------------------------
