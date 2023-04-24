@@ -1,5 +1,8 @@
 import datetime as dt
 
+# TODO: standardize docstrings, add examples to docstrings
+
+
 def round_up(number, decimal_places=0):
     """
     Round a number up to the nearest multiple of 10^(-decimals).
@@ -15,7 +18,7 @@ def round_up(number, decimal_places=0):
         raise ValueError("number must be a numeric value")
     if not isinstance(decimal_places, int):
         raise ValueError("decimal_places must be an integer")
-    
+
     multiplier = 10 ** decimal_places
     return round(number * multiplier, ndigits=None, up=True) / multiplier
 
@@ -32,7 +35,7 @@ def convert_to_seconds(values):
     """
     if not all(":") in values:
         raise ValueError("All input values must be in 'hh:mm' format")
-    
+
     total_seconds = sum(
         dt.timedelta(hours=int(h), minutes=int(m)).total_seconds()
         for h, m in (x.split(":") for x in values)
@@ -52,7 +55,7 @@ def percentage_to_float(values):
     """
     if not all(col in values.columns for col in ["rel_bad_boxes"]):
         raise ValueError("Input DataFrame must have a 'rel_bad_boxes' column")
-    
+
     values["rel_bad_boxes"] = values["rel_bad_boxes"].apply(
         lambda x: x.replace("%", "")).astype(float) / 100
     return values
@@ -76,7 +79,7 @@ def get_ws_pm():
     for i in range(1, 32):
         try:
             thisdate = dt.date(lastMonth.year, lastMonth.month, i)
-        except(ValueError):
+        except (ValueError):
             break
         if thisdate.weekday() < 5:  # Monday == 0, Sunday == 6
             working_hours += 18
@@ -89,5 +92,5 @@ def get_ws_pm():
         elif lastMonth.month == 12:
             if (thisdate.weekday() in [5, 6]):
                 working_hours += 18
-    #print(working_hours * 3600)
-    return(working_hours*3600)
+    # print(working_hours * 3600)
+    return (working_hours*3600)
