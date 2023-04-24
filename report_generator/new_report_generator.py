@@ -76,24 +76,96 @@ start_date = pd.to_datetime('2022-04-01')
 end_date = pd.to_datetime('2023-03-01')
 # -----------------------------------------------------------------------------
 
-# read csv files from local storage
+# import all csv files
 # -----------------------------------------------------------------------------
-df_current = pd.read_csv('./raw_data/boxes_total_current.csv',
-                         delimiter=';',
-                         usecols=['DateTime',
-                                  'Machine',
-                                  'Boxes',
-                                  ],
-                         )
-df_previous = pd.read_csv('./raw_data/boxes_total_previous.csv',
-                          delimiter=';',
-                          usecols=['DateTime',
-                                   'Machine',
-                                   'Boxes',
-                                   ],
+# df_current = pd.read_csv('./raw_data/boxes_total_current.csv',
+#                         delimiter=';',
+#                         usecols=['DateTime',
+#                                  'Machine',
+#                                  'Boxes',
+#                                  ],
+#                         )
+# df_previous = pd.read_csv('./raw_data/boxes_total_previous.csv',
+#                          delimiter=';',
+#                          usecols=['DateTime',
+#                                   'Machine',
+#                                   'Boxes',
+#                                   ],
+#                          )
+
+# Read in all the CSV files
+cm_time = pd.read_csv("./raw_data/Corrective Maintenance Time.csv",
+                      delimiter=';',
+                      usecols=['DateTime',
+                               'Machine',
+                               'Time',
+                               ],
+                      )
+et_time = pd.read_csv("./raw_data/Error Time.csv",
+                      delimiter=';',
+                      usecols=['DateTime',
+                               'Machine',
+                               'Time',
+                               ],
+                      )
+it_time = pd.read_csv("./raw_data/Idle Time.csv",
+                      delimiter=';',
+                      usecols=['DateTime',
+                               'Machine',
+                               'Time',
+                               ],
+                      )
+pm_time = pd.read_csv("./raw_data/Preventive Maintenance Time.csv",
+                      delimiter=';',
+                      usecols=['DateTime',
+                               'Machine',
+                               'Time',
+                               ],
+                      )
+rt_time = pd.read_csv("./raw_data/Run Time.csv",
+                      delimiter=';',
+                      usecols=['DateTime',
+                               'Machine',
+                               'Time',
+                               ],
+                      )
+
+# Merge all the dataframes on 'Machine' and 'DateTime'
+df_time_merged = pd.merge(cm_time,
+                          et_time,
+                          on=["Machine",
+                              "DateTime",],
+                          how="outer",
                           )
+df_time_merged = pd.merge(df_time_merged,
+                          it_time,
+                          on=["Machine",
+                              "DateTime",],
+                          how="outer",
+                          )
+df_time_merged = pd.merge(df_time_merged,
+                          pm_time,
+                          on=["Machine",
+                              "DateTime",],
+                          how="outer",
+                          )
+df_time_merged = pd.merge(df_time_merged,
+                          rt_time,
+                          on=["Machine",
+                              "DateTime",],
+                          how="outer",
+                          )
+
+# Replace missing values with 0
+df_time_merged.fillna(0,
+                      inplace=True,
+                      )
+
+print(df_time_merged)
 # -----------------------------------------------------------------------------
 
+# start of figuremaking
+# -----------------------------------------------------------------------------
 
 # Plot total Boxes Year over Year
 # -----------------------------------------------------------------------------
@@ -108,163 +180,4 @@ fig_byoy = ig.plot_boxes_by_month(
 plt.show(fig_byoy)
 
 # TODO: save plot as pdf to use it in the report
-# -----------------------------------------------------------------------------
-
-# Make a donut Chart with all Machines and plot the total in the middle
-# -----------------------------------------------------------------------------
-# Filter the rows to include only the desired machines
-df_donut = pd.read_csv('./raw_data/boxes_total_current.csv',
-                       delimiter=';',
-                       usecols=['DateTime',
-                                'Machine',
-                                'Boxes',
-                                ],
-                       )
-
-# Filter the rows to include only the last available month
-df_donut['DateTime'] = pd.to_datetime(df_donut['DateTime'])
-last_month = df_donut['DateTime'].max()
-df_last_month = df_donut[df_donut['DateTime'] == last_month]
-
-# Filter the rows to include only the desired machines
-df_machines = df_last_month[df_last_month['Machine'].isin(machine_names)]
-
-# Calculate the total number of boxes for the selected machines
-total_boxes = df_machines['Boxes'].sum()
-
-# Create a pie chart with the selected machines
-colors = [c for c in palette_list if c != 'grey']
-fig, ax = plt.subplots()
-wedges, texts, autotexts = ax.pie(df_machines['Boxes'],
-                                  labels=df_machines['Machine'],
-                                  colors=colors,
-                                  autopct='%1.1f%%',
-                                  startangle=90,
-                                  textprops={'fontsize': 14},
-                                  wedgeprops={'linewidth': 7,
-                                              'edgecolor': 'white',
-                                              }
-                                  )
-center_circle = plt.Circle((0, 0),
-                           0.5,
-                           color='white',
-                           )
-fig = plt.gcf()
-fig.gca().add_artist(center_circle)
-plt.setp(autotexts,
-         size=16,
-         weight="bold",
-         )
-plt.setp(texts,
-         size=16,
-         )
-
-# Add the total number of boxes to the center of the chart
-ax.text(0,
-        0,
-        total_boxes,
-        ha='center',
-        va='center',
-        fontsize=24,
-        )
-
-# Set the title of the chart
-ax.set_title('Total Boxes for Selected Machines ({})'.format(
-    last_month.strftime('%b %Y')),
-    fontsize=20,
-)
-
-# set axis equal to ensure circle is drawn as a circle
-plt.axis('equal')
-# Show the chart
-plt.savefig('./test_2.pdf')
-# plt.show()
-plt.clf()
-# -----------------------------------------------------------------------------
-
-
-# create a single line chart that shows the total daily produced boxes
-# -----------------------------------------------------------------------------
-df = pd.read_csv('./raw_data/produced_boxes_daily.csv',
-                 delimiter=';',
-                 usecols=['DateTime',
-                          'Machine',
-                          'Boxes',
-                          ],
-                 )
-
-# format DateTime to dd/mm
-df['DateTime'] = pd.to_datetime(df['DateTime'])
-df['DateTime'] = df['DateTime'].dt.strftime('%d/%m')
-
-# filter for Total Values
-total_df = df[df['Machine'] == 'Total']
-
-# create the line plot, move the legend to the bottom
-fig, ax = plt.subplots()
-total_df.plot(x='DateTime', y='Boxes', color=palette_list[4], ax=ax)
-box = ax.get_position()
-ax.set_position([box.x0, box.y0 + box.height * 0.2,
-                 box.width, box.height * 0.8,
-                 ],
-                )
-ax.legend(['Total'],
-          bbox_to_anchor=(0.5, -0.15),
-          ncol=1,
-          )
-plt.box(False)
-plt.xticks(rotation=45)
-
-# shot the chart
-plt.savefig('./test_3.pdf')
-# plt.show()
-plt.clf()
-# -----------------------------------------------------------------------------
-
-
-# create a grouped barplot showing daily produced boxes per machine
-# -----------------------------------------------------------------------------
-# Load data from CSV file
-df = pd.read_csv('./raw_data/produced_boxes_daily.csv',
-                 delimiter=';',
-                 usecols=['DateTime',
-                          'Machine',
-                          'Boxes'],
-                 )
-
-# Format DateTime to dd/mm
-df['DateTime'] = pd.to_datetime(df['DateTime'])
-df['DateTime'] = df['DateTime'].dt.strftime('%d/%m')
-
-# Create grouped barplot with legend at bottom
-fig, ax = plt.subplots()
-sns.barplot(x='DateTime',
-            y='Boxes',
-            hue='Machine',
-            palette=palette_list,
-            data=df[df['Machine'].isin(machine_names)],
-            ax=ax,
-            )
-box = ax.get_position()
-ax.set_position([box.x0, box.y0 + box.height * 0.2,
-                 box.width, box.height * 0.8,
-                 ])
-ax.legend(custom_lines,
-          machine_names,
-          bbox_to_anchor=(0.5, -0.15),
-          ncol=4,
-          )
-# ax.set(xlabel=None)
-
-plt.box(False)
-plt.xticks(rotation=45)
-
-# show the chart
-plt.savefig('./test_4.pdf')
-# plt.show()
-plt.clf()
-# -----------------------------------------------------------------------------
-
-
-#
 # -----------------------------------------------------------------------------
