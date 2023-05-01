@@ -123,42 +123,41 @@ dd.download_data_parts(driver,
                        )
 # -----------------------------------------------------------------------------
 
-
 # -----------------------------------------------------------------------------
 # Read in all the CSV files
-cm_time = pd.read_csv("./raw_data/Corrective Maintenance Time.csv",
+cm_time = pd.read_csv("./raw_data/corr_maint_time.csv",
                       delimiter=';',
                       usecols=['DateTime',
                                'Machine',
-                               'Time',
+                               'Hours',
                                ],
                       )
-et_time = pd.read_csv("./raw_data/Error Time.csv",
+et_time = pd.read_csv("./raw_data/error_time.csv",
                       delimiter=';',
                       usecols=['DateTime',
                                'Machine',
-                               'Time',
+                               'Hours',
                                ],
                       )
-it_time = pd.read_csv("./raw_data/Idle Time.csv",
+it_time = pd.read_csv("./raw_data/idle_time.csv",
                       delimiter=';',
                       usecols=['DateTime',
                                'Machine',
-                               'Time',
+                               'Hours',
                                ],
                       )
-pm_time = pd.read_csv("./raw_data/Preventive Maintenance Time.csv",
+pm_time = pd.read_csv("./raw_data/prev_maint_time.csv",
                       delimiter=';',
                       usecols=['DateTime',
                                'Machine',
-                               'Time',
+                               'Hours',
                                ],
                       )
-rt_time = pd.read_csv("./raw_data/Run Time.csv",
+rt_time = pd.read_csv("./raw_data/run_time.csv",
                       delimiter=';',
                       usecols=['DateTime',
                                'Machine',
-                               'Time',
+                               'Hours',
                                ],
                       )
 
@@ -194,22 +193,4 @@ df_time_merged.fillna(0,
                       )
 
 print(df_time_merged)
-# -----------------------------------------------------------------------------
-
-# start of figuremaking
-# -----------------------------------------------------------------------------
-
-# Plot total Boxes Year over Year
-# -----------------------------------------------------------------------------
-fig_byoy = ig.plot_boxes_by_month(
-    df_current,
-    df_previous,
-    machine_names,
-    start_date,
-    end_date,
-)
-
-plt.show(fig_byoy)
-
-# TODO: save plot as pdf to use it in the report
 # -----------------------------------------------------------------------------
