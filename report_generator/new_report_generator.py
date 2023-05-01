@@ -20,7 +20,9 @@ import numpy as np
 import matplotlib.colors as colors
 import seaborn as sns
 import new_image_generator as ig
+from getpass import getpass
 from matplotlib.lines import Line2D
+from datetime import datetime, timedelta
 # -----------------------------------------------------------------------------
 
 # set global plt parameters
@@ -72,26 +74,29 @@ machine_names = ['L1 - VPM B (4958)',
 
 # configure start and enddates
 # -----------------------------------------------------------------------------
+# Get the username, password, and month from the user
+username = input("Enter your username: ")
+password = getpass("Enter your password: ")
+year = int(input("Enter the year for the report: "))
+month = int(input("Enter the month for the report (1-12): "))
+
+# Calculate the start_date (first day of the month) and end_date (last day of the month)
+start_date = datetime(year, month, 1)
+if month == 12:
+    end_date = datetime(year + 1, 1, 1) - timedelta(days=1)
+else:
+    end_date = datetime(year, month + 1, 1) - timedelta(days=1)
+
+# Format start_date and end_date as strings
+start_date_str = start_date.strftime("%d/%m/%Y 00:00")
+end_date_str = end_date.strftime("%d/%m/%Y 23:59")
+
+print(f"Start date: {start_date_str}")
+print(f"End date: {end_date_str}")
+
 start_date = pd.to_datetime('2022-04-01')
 end_date = pd.to_datetime('2023-03-01')
 # -----------------------------------------------------------------------------
-
-# import all csv files
-# -----------------------------------------------------------------------------
-# df_current = pd.read_csv('./raw_data/boxes_total_current.csv',
-#                         delimiter=';',
-#                         usecols=['DateTime',
-#                                  'Machine',
-#                                  'Boxes',
-#                                  ],
-#                         )
-# df_previous = pd.read_csv('./raw_data/boxes_total_previous.csv',
-#                          delimiter=';',
-#                          usecols=['DateTime',
-#                                   'Machine',
-#                                   'Boxes',
-#                                   ],
-#                          )
 
 # Read in all the CSV files
 cm_time = pd.read_csv("./raw_data/Corrective Maintenance Time.csv",
