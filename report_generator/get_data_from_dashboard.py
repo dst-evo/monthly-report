@@ -156,13 +156,14 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
     elif sidebar_button_text in sub_bad_boxes:
         dropdown_text = 'Bad Boxes'
     else:
-        raise ValueError("Invalid sidebar_button_text")
+        dropdown_text = None
 
-    dropdown_xpath = f"//a[contains(text(), '{dropdown_text}')]"
-    dropdown = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, dropdown_xpath))
-    )
-    dropdown.click()
+    if dropdown_text is not None:
+        dropdown_xpath = f"//a[contains(text(), '{dropdown_text}')]"
+        dropdown = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, dropdown_xpath))
+        )
+        dropdown.click()
 
     # Locate and click on the specified sidebar button
     sidebar_button_xpath = f"//a[contains(text(), '{sidebar_button_text}')]"
