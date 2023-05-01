@@ -129,12 +129,21 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
     # Add some delay to load the next page
     time.sleep(1)
 
-    # Locate and click on the "Counting" dropdown
-    counting_dropdown_xpath = "//a[contains(text(), 'Counting')]"
-    counting_dropdown = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, counting_dropdown_xpath))
+    # Locate and click on the appropriate dropdown based on sidebar_button_text
+    if sidebar_button_text in sub_counting:
+        dropdown_text = 'Counting'
+    elif sidebar_button_text in sub_timing:
+        dropdown_text = 'Timing'
+    elif sidebar_button_text in sub_bad_boxes:
+        dropdown_text = 'Bad Boxes'
+    else:
+        raise ValueError("Invalid sidebar_button_text")
+
+    dropdown_xpath = f"//a[contains(text(), '{dropdown_text}')]"
+    dropdown = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, dropdown_xpath))
     )
-    counting_dropdown.click()
+    dropdown.click()
 
     # Locate and click on the specified sidebar button
     sidebar_button_xpath = f"//a[contains(text(), '{sidebar_button_text}')]"
