@@ -90,12 +90,6 @@ else:
 # Format start_date and end_date as strings
 start_date_str = start_date.strftime("%d/%m/%Y 00:00")
 end_date_str = end_date.strftime("%d/%m/%Y 23:59")
-
-print(f"Start date: {start_date_str}")
-print(f"End date: {end_date_str}")
-
-start_date = pd.to_datetime('2022-04-01')
-end_date = pd.to_datetime('2023-03-01')
 # -----------------------------------------------------------------------------
 
 # Read in all the CSV files
