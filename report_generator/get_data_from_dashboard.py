@@ -36,49 +36,68 @@ sub_bad_boxes = ['Bad boxes: All reasons',
                  'Bad boxes: Removed boxes',
                  ]
 
-# set download path and start the driver
-# ------------------------------------------------------------------------------
-# Get the location of the script
-script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
 
-# Set up download preferences
-download_dir = os.path.join(script_dir, 'raw_data')
+def create_configured_driver(ip_address):
+    """
+    Create and configure a Firefox WebDriver instance with download preferences and headless mode.
 
-# Create the download directory if it doesn't exist
-os.makedirs(download_dir, exist_ok=True)
+    Parameters:
+    ip_address (str): The IP address to navigate to.
 
-firefox_options = webdriver.FirefoxOptions()
-firefox_options.set_preference("browser.download.folderList", 2)
-firefox_options.set_preference(
-    "browser.download.manager.showWhenStarting", False)
-firefox_options.set_preference("browser.download.dir", download_dir)
-firefox_options.set_preference(
-    "browser.helperApps.neverAsk.saveToDisk", "text/csv")
+    Returns:
+    webdriver (selenium.webdriver.firefox.webdriver.WebDriver): A configured Firefox WebDriver instance.
+    """
+    # Get the location of the script
+    script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
 
-# Initialize the driver with the download preferences
-driver = webdriver.Firefox(options=firefox_options)
-# Connect to the specified IP address
-url = "http://172.22.139.212/dashboard/WebReport/index.php"
-driver.get(url)
-# ------------------------------------------------------------------------------
+    # Set up download preferences
+    download_dir = os.path.join(script_dir, 'raw_data')
 
-# login to the dashboard
-# ------------------------------------------------------------------------------
-# Locate the username input field and enter the value "cmc"
-username_field = driver.find_element(By.ID, "username")
-username_field.send_keys("cmc")
+    # Create the download directory if it doesn't exist
+    os.makedirs(download_dir, exist_ok=True)
 
-# Locate the password input field and enter the value "cmc"
-password_field = driver.find_element(By.ID, "password")
-password_field.send_keys("cmc")
+    firefox_options = webdriver.FirefoxOptions()
+    firefox_options.set_preference("browser.download.folderList", 2)
+    firefox_options.set_preference(
+        "browser.download.manager.showWhenStarting", False)
+    firefox_options.set_preference("browser.download.dir", download_dir)
+    firefox_options.set_preference(
+        "browser.helperApps.neverAsk.saveToDisk", "text/csv")
+    firefox_options.add_argument("--headless")  # Enable headless mode
 
-# Locate the login button and click it
-login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
-login_button.click()
+    # Initialize the driver with the download preferences
+    driver = webdriver.Firefox(options=firefox_options)
 
-# Add some delay to load the next page
-time.sleep(1)
-# ------------------------------------------------------------------------------
+    # Connect to the specified IP address
+    url = f"http://{ip_address}/dashboard/WebReport/index.php"
+    driver.get(url)
+
+    return driver
+
+
+def login(driver, username, password):
+    """
+    Log in to the dashboard using the given username and password.
+
+    Parameters:
+    driver (webdriver): The Selenium WebDriver instance to interact with the page.
+    username (str): The username for logging in.
+    password (str): The password for logging in.
+
+    Returns:
+    None
+    """
+    # Locate the username input field and enter the given value
+    username_field = driver.find_element(By.ID, "username")
+    username_field.send_keys(username)
+
+    # Locate the password input field and enter the given value
+    password_field = driver.find_element(By.ID, "password")
+    password_field.send_keys(password)
+
+    # Locate the login button and click it
+    login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
+    login_button.click()
 
 
 def configure_and_download_data(driver, granularity, totalized, start_date, end_date, sidebar_button_text, file_name):
@@ -180,7 +199,3 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
         EC.element_to_be_clickable((By.XPATH, sidebar_button_xpath))
     )
     sidebar_button.click()
-
-
-# configure_and_download_data(
-#    driver, "month", "yes", "01/06/2022 00:00", "30/04/2023 23:59", "Produced boxes", "test_file.csv")
