@@ -20,9 +20,11 @@ import numpy as np
 import matplotlib.colors as colors
 import seaborn as sns
 import new_image_generator as ig
+import get_data_from_dashboard as gdfd
 from getpass import getpass
 from matplotlib.lines import Line2D
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 # -----------------------------------------------------------------------------
 
 # set global plt parameters
@@ -72,7 +74,7 @@ machine_names = ['L1 - VPM B (4958)',
                  ]
 # -----------------------------------------------------------------------------
 
-# configure start and enddates
+# configure login, dates and ip
 # -----------------------------------------------------------------------------
 # Get the username, password, and month from the user
 username = input("Enter your username: ")
@@ -87,11 +89,29 @@ if month == 12:
 else:
     end_date = datetime(year, month + 1, 1) - timedelta(days=1)
 
+# Calculate the second start_date (12 months before the end_date)
+second_start_date = end_date - relativedelta(months=11)
+second_start_date = second_start_date.replace(day=1)
+
 # Format start_date and end_date as strings
 start_date_str = start_date.strftime("%d/%m/%Y 00:00")
 end_date_str = end_date.strftime("%d/%m/%Y 23:59")
+
+ip_address = "172.22.139.212"
 # -----------------------------------------------------------------------------
 
+
+# download all needed data
+# -----------------------------------------------------------------------------
+# configure driver
+driver = gdfd.create_configured_driver(ip_address)
+
+# login into the dasboard
+gdfd.login(driver, username, password)
+
+# download
+
+# -----------------------------------------------------------------------------
 # Read in all the CSV files
 cm_time = pd.read_csv("./raw_data/Corrective Maintenance Time.csv",
                       delimiter=';',
