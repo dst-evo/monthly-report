@@ -2,6 +2,16 @@ import pandas as pd
 
 
 def merge_time_data(delimiter=';', columns=['DateTime', 'Machine', 'Hours']):
+    """
+    Merge time data from multiple CSV files and return a dataframe with renamed columns.
+
+    Parameters:
+    delimiter (str, optional): The delimiter used in the CSV files. Default is ';'.
+    columns (list, optional): The column names to be read from the CSV files. Default is ['DateTime', 'Machine', 'Hours'].
+
+    Returns:
+    pandas.DataFrame: A dataframe containing the merged data from all CSV files, with renamed columns based on the source file and missing values replaced with 0.
+    """
     # Read in all the CSV files
     cm_time = pd.read_csv("./raw_data/corr_maint_time.csv",
                           delimiter=delimiter, usecols=columns)
