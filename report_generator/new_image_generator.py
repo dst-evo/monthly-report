@@ -19,7 +19,7 @@ from matplotlib.lines import Line2D
 # set global plt parameters
 # -----------------------------------------------------------------------------
 plt.rcParams['figure.figsize'] = [16.0, 9.0]  # [16.0, 9.0]
-plt.rcParams['figure.dpi'] = 300
+plt.rcParams['figure.dpi'] = 100
 plt.rcParams['font.family'] = 'Europa-Regular'
 plt.rcParams['axes.grid'] = True
 plt.rcParams['axes.grid.axis'] = 'y'
@@ -248,7 +248,7 @@ def create_donut_chart(df_donut, machine_names, title):
 
 # create a single line chart that shows the total daily produced boxes
 # -----------------------------------------------------------------------------
-def create_line_plot(df, machine_names, title):
+def create_single_lineplot(df, machine_names, title):
     """
     Creates a line plot of box values for a specific machine for each day
     of the month.
@@ -320,7 +320,7 @@ def create_grouped_barplot(df_barplot, machine_names, title):
                 y='Boxes',
                 hue='Machine',
                 palette=palette_list,
-                data=df[df['Machine'].isin(machine_names)],
+                data=df_barplot[df_barplot['Machine'].isin(machine_names)],
                 ax=ax,
                 )
     box = ax.get_position()
@@ -344,7 +344,7 @@ def create_grouped_barplot(df_barplot, machine_names, title):
 
 # create a multiline plot that shows each machine in a subplot
 # -----------------------------------------------------------------------------
-def create_lineplot(df_lineplot, machine_names, title):
+def create_multi_lineplot(df_lineplot, machine_names, title):
     """
     Create a set of line plots showing the box counts over time for each machine.
 
@@ -363,6 +363,11 @@ def create_lineplot(df_lineplot, machine_names, title):
         >>> df_lineplot = pd.read_csv('data.csv')
         >>> create_lineplot(df_barplot, ['Machine A', 'Machine B'], 'Total Boxes for Machines A and B')
     """
+
+    # format DateTime to dd/mm
+    df_lineplot['DateTime'] = pd.to_datetime(df_lineplot['DateTime'])
+    df_lineplot['DateTime'] = df_lineplot['DateTime'].dt.strftime('%d/%m')
+
     # Create a list of subplots
     fig, axs = plt.subplots(2, 2, figsize=(10, 8), sharey=True)
 
@@ -400,3 +405,61 @@ def create_lineplot(df_lineplot, machine_names, title):
 
     return fig
 # -----------------------------------------------------------------------------
+
+
+# create a 2x2 barplot to show stuff by day and machine.
+# -----------------------------------------------------------------------------
+def create_multi_barplot(df_mbp, machine_names, title):
+
+    # format DateTime to dd/mm
+    df_mbp['DateTime'] = pd.to_datetime(df_mbp['DateTime'])
+    df_mbp['DateTime'] = df_mbp['DateTime'].dt.strftime('%d/%m')
+
+    fig, axs = plt.subplots(2, 2, figsize=(10, 8), sharey=True)
+
+    # Flatten the axs array to allow for easier iteration
+    axs = axs.flatten()
+
+    # Iterate over each machine name and corresponding color
+    for i, (machine, color) in enumerate(zip(machine_names, palette_list)):
+
+        # Create a filtered dataframe for the current machine
+        curr_df = df_mbp[df_mbp["Machine"] == machine]
+
+        axs[i].bar(curr_df["DateTime"],
+                   curr_df["Boxes"],
+                   color=color,
+                   linewidth=2,
+                   )
+
+        # Set the title for the current subplot
+        axs[i].set_title(machine)
+
+        # Set the x-axis label for the current subplot
+        axs[i].set_xlabel("Date")
+
+        # Rotate the x-axis labels for readability
+        axs[i].tick_params(axis="x", rotation=45)
+
+    # Set the y-axis label for the entire figure
+    fig.text(0.04, 0.5, "Boxes", va="center", rotation="vertical")
+
+    # Set the overall title for the entire figure
+    fig.suptitle("Box counts by machine", fontsize=16)
+
+    # Adjust the layout of the subplots to improve readability
+    plt.subplots_adjust(wspace=0.05, hspace=0.3)
+
+    plt.show()
+# -----------------------------------------------------------------------------
+
+
+df_current = pd.read_csv('./raw_data/produced_boxes_daily.csv',
+                         delimiter=';',
+                         usecols=['DateTime',
+                                  'Machine',
+                                  'Boxes',
+                                  ],
+                         )
+
+create_multi_barplot(df_current, machine_names, 'test')

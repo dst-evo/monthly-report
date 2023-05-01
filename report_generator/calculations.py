@@ -1,43 +1,85 @@
-import math
-import datetime
-import pandas as pd
+import datetime as dt
 
-from numpy import average
+# TODO: standardize docstrings, add examples to docstrings
 
 
-def round_up(n, decimals=0):
-    multiplier = 10 ** decimals
-    return math.ceil(n*multiplier)/multiplier
+def round_up(number, decimal_places=0):
+    """
+    Round a number up to the nearest multiple of 10^(-decimals).
+
+    Parameters:
+    number (float): The number to round up.
+    decimals_places (int, optional): The number of decimal places to round up to. Default is 0.
+
+    Returns:
+    float: The rounded-up value.
+    """
+    if not isinstance(number, (int, float)):
+        raise ValueError("number must be a numeric value")
+    if not isinstance(decimal_places, int):
+        raise ValueError("decimal_places must be an integer")
+
+    multiplier = 10 ** decimal_places
+    return round(number * multiplier, ndigits=None, up=True) / multiplier
 
 
 def convert_to_seconds(values):
-    """ convert a series of hh:mm elements to seconds and add them up """
-    total = 0
-    for x in values:
-        h, m = x.split(':')
-        total += int(h) * 3600 + int(m) * 60
+    """
+    Convert a series of hh:mm elements to seconds and sum them.
 
-    print(total)
-    return total
+    Parameters:
+    values (list or pandas.Series): The values to convert to seconds.
+
+    Returns:
+    int: The total number of seconds.
+    """
+    if not all(":") in values:
+        raise ValueError("All input values must be in 'hh:mm' format")
+
+    total_seconds = sum(
+        dt.timedelta(hours=int(h), minutes=int(m)).total_seconds()
+        for h, m in (x.split(":") for x in values)
+    )
+    return total_seconds
 
 
 def percentage_to_float(values):
-    values['rel_bad_boxes'] = values['rel_bad_boxes'].str.rstrip(
-        '%').astype('float') / 100
+    """
+    Convert a percentage string to a float value.
+
+    Parameters:
+    values (pandas.DataFrame): A DataFrame with a 'rel_bad_boxes' column containing percentage strings.
+
+    Returns:
+    pandas.DataFrame: The input DataFrame with the 'rel_bad_boxes' column converted to floats.
+    """
+    if not all(col in values.columns for col in ["rel_bad_boxes"]):
+        raise ValueError("Input DataFrame must have a 'rel_bad_boxes' column")
+
+    values["rel_bad_boxes"] = values["rel_bad_boxes"].apply(
+        lambda x: x.replace("%", "")).astype(float) / 100
     return values
 
 
 def get_ws_pm():
-    """get total working seconds of the past month """
-    today = datetime.date.today()
+    """
+    Calculate the total number of working seconds in the previous month based on a standard 18-hour workday from Monday 
+    to Friday and 9 or 18-hour workday on Saturdays and Sundays, depending on the month.
+
+    Returns:
+    --------
+    int:
+        The total number of working seconds in the previous month.
+    """
+    today = dt.date.today()
     first = today.replace(day=1)
-    lastMonth = first - datetime.timedelta(days=1)
+    lastMonth = first - dt.timedelta(days=1)
     lastMonth.month
     working_hours = 0
     for i in range(1, 32):
         try:
-            thisdate = datetime.date(lastMonth.year, lastMonth.month, i)
-        except(ValueError):
+            thisdate = dt.date(lastMonth.year, lastMonth.month, i)
+        except (ValueError):
             break
         if thisdate.weekday() < 5:  # Monday == 0, Sunday == 6
             working_hours += 18
@@ -50,29 +92,5 @@ def get_ws_pm():
         elif lastMonth.month == 12:
             if (thisdate.weekday() in [5, 6]):
                 working_hours += 18
-    #print(working_hours * 3600)
-    return(working_hours*3600)
-
-
-def calculate_totals(df_a, df_b, df_c, df_d):
-    df_total = pd.concat([df_a, df_b, df_c, df_d])
-    df_return = []
-    percentage_to_float(df_total)
-    # calculate total boxes
-    df_return.append(sum(df_total['produced_boxes']))
-    df_return.append(convert_to_seconds(df_total['run_time']))
-    df_return.append(convert_to_seconds(df_total['idle_time']))
-    df_return.append(convert_to_seconds(df_total['error_time']))
-    df_return.append(convert_to_seconds(df_total['corr_maint_time']))
-    df_return.append(convert_to_seconds(df_total['prev_maint_time']))
-    df_return.append(get_ws_pm() * 4 - sum(df_return[1:5]))
-    df_return.append(sum(df_total['abs_bad_boxes']))
-    df_return.append(df_total.where(df_total['run_time'] > '01:00')[
-                     'rel_bad_boxes'].mean())
-    df_return.append(sum(df_b['produced_boxes']))
-    df_return.append(sum(df_a['produced_boxes']))
-    df_return.append(sum(df_c['produced_boxes']))
-    df_return.append(sum(df_d['produced_boxes']))
-    return df_return
-
-    #pd.DataFrame({'Name': [], 'Value': []})
+    # print(working_hours * 3600)
+    return (working_hours*3600)
