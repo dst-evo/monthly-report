@@ -107,20 +107,20 @@ ip_address = "172.22.139.212"
 # download all needed data
 # -----------------------------------------------------------------------------
 # configure driver
-print("Configuring Selenium webdriver")
-driver = gdfd.create_configured_driver(ip_address)
-
+# print("Configuring Selenium webdriver")
+# driver = gdfd.create_configured_driver(ip_address)
+#
 # login into the dasboard
-print("Starting the login process")
-gdfd.login(driver, username, password)
+# print("Starting the login process")
+# gdfd.login(driver, username, password)
 
 # download the data
 # -----------------------------------------------------------------------------
-dd.download_data_parts(driver,
-                       start_date_str,
-                       end_date_str,
-                       second_start_date_str,
-                       )
+# dd.download_data_parts(driver,
+#                       start_date_str,
+#                       end_date_str,
+#                       second_start_date_str,
+#                       )
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
@@ -164,33 +164,32 @@ rt_time = pd.read_csv("./raw_data/run_time.csv",
 # Merge all the dataframes on 'Machine' and 'DateTime'
 df_time_merged = pd.merge(cm_time,
                           et_time,
-                          on=["Machine",
-                              "DateTime",],
+                          on=["Machine", "DateTime"],
                           how="outer",
-                          )
+                          suffixes=('_corr_maint', '_error'))
 df_time_merged = pd.merge(df_time_merged,
                           it_time,
-                          on=["Machine",
-                              "DateTime",],
+                          on=["Machine", "DateTime"],
                           how="outer",
                           )
 df_time_merged = pd.merge(df_time_merged,
                           pm_time,
-                          on=["Machine",
-                              "DateTime",],
+                          on=["Machine", "DateTime"],
                           how="outer",
                           )
 df_time_merged = pd.merge(df_time_merged,
                           rt_time,
-                          on=["Machine",
-                              "DateTime",],
+                          on=["Machine", "DateTime"],
                           how="outer",
                           )
 
+# Rename the columns
+df_time_merged = df_time_merged.rename(columns={'Hours': 'Hours_run'})
+df_time_merged = df_time_merged.rename(columns={'Hours_x': 'Hours_idle'})
+df_time_merged = df_time_merged.rename(columns={'Hours_y': 'Hours_prev'})
+
 # Replace missing values with 0
-df_time_merged.fillna(0,
-                      inplace=True,
-                      )
+df_time_merged.fillna(0, inplace=True)
 
 print(df_time_merged)
 # -----------------------------------------------------------------------------
