@@ -146,7 +146,7 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
     submit_button.click()
 
     # Add some delay to load the next page
-    time.sleep(1)
+    time.sleep(0.5)
 
     # Locate and click on the appropriate dropdown based on sidebar_button_text
     if sidebar_button_text in sub_counting:
@@ -154,7 +154,7 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
     elif sidebar_button_text in sub_timing:
         dropdown_text = 'Timing'
     elif sidebar_button_text in sub_bad_boxes:
-        dropdown_text = 'Bad Boxes'
+        dropdown_text = 'Bad boxes'
     else:
         dropdown_text = None
 
@@ -172,7 +172,7 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
     )
     sidebar_button.click()
 
-    time.sleep(1)
+    time.sleep(0.5)
 
     # Locate and click on the "File CSV" link
     csv_link_xpath = "//a[contains(@href, 'filetype=csv')]"
@@ -182,7 +182,7 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
     csv_link.click()
 
     # Give the file some time to download
-    time.sleep(5)
+    time.sleep(1)
 
     # Get the latest downloaded file from the download directory
     download_directory = os.path.join(
