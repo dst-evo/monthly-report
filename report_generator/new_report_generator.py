@@ -97,6 +97,7 @@ second_start_date = second_start_date.replace(day=1)
 start_date_str = start_date.strftime("%d/%m/%Y 00:00")
 end_date_str = end_date.strftime("%d/%m/%Y 23:59")
 
+# TODO: input() instead of hardcoded if necessary
 ip_address = "172.22.139.212"
 # -----------------------------------------------------------------------------
 
