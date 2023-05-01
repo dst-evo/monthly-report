@@ -195,7 +195,7 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
     shutil.move(latest_file, new_file_path)
 
     # Locate and click on the filter button to return to the start
-    sidebar_button_xpath = f"//a[contains(text(), 'Filter')]"
+    sidebar_button_xpath = "//a[contains(@href, 'filtersetup.php') and contains(., 'Filter')]"
     sidebar_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, sidebar_button_xpath))
     )
