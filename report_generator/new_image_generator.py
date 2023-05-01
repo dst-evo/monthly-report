@@ -67,13 +67,13 @@ custom_lines = [Line2D([0], [0], color=palette_lc(0), lw=8),
 
 # Plot total Boxes Year over Year
 # -----------------------------------------------------------------------------
-def plot_boxes_by_month(df_current, df_previous, machine_names, start_date, end_date, title):
+def plot_boxes_by_month(df_current, machine_names, start_date, end_date, title, df_previous=None):
     """
      Plot the comparison of boxes by month for two dataframes containing the number of boxes for different machines.
 
     Args:
         df_current (pandas.DataFrame): A dataframe containing the current boxes data for the machines.
-        df_previous (pandas.DataFrame): A dataframe containing the previous year boxes data for the machines.
+        df_previous (pandas.DataFrame, optional): A dataframe containing the previous year boxes data for the machines. Defaults to None.
         machine_names (list): A list of machine names to be plotted.
         start_date (datetime): A datetime object representing the start date of the desired time period.
         end_date (datetime): A datetime object representing the end date of the desired time period.
@@ -90,16 +90,18 @@ def plot_boxes_by_month(df_current, df_previous, machine_names, start_date, end_
     df_current['DateTime'] = pd.to_datetime(df_current['DateTime'])
     df_previous['DateTime'] = pd.to_datetime(df_previous['DateTime'])
 
-    # Add a year to the DateTime column in df_previous
-    df_previous['DateTime'] = df_previous['DateTime'] + \
-        pd.offsets.DateOffset(years=1)
+    # Add a year to the DateTime column in df_previous, if provided
+    if df_previous is not None:
+        df_previous['DateTime'] = df_previous['DateTime'] + pd.offsets.DateOffset(years=1)
 
-    # Merge the two dataframes based on DateTime column
-    df_merged = pd.merge(df_current, df_previous, on='DateTime')
+        # Merge the two dataframes based on DateTime column
+        df_merged = pd.merge(df_current, df_previous, on='DateTime')
 
-    # Rename the columns to differentiate between the two sets of boxes
-    df_merged = df_merged.rename(
-        columns={'Boxes_x': 'Boxes_current', 'Boxes_y': 'Boxes_previous'})
+        # Rename the columns to differentiate between the two sets of boxes
+        df_merged = df_merged.rename(
+            columns={'Boxes_x': 'Boxes_current', 'Boxes_y': 'Boxes_previous'})
+    else:
+        df_merged = df_current.rename(columns={'Boxes_x': 'Boxes_current'})
 
     # Extract the values for the desired time period
     # start_date = pd.to_datetime('2022-04-01')
@@ -118,32 +120,35 @@ def plot_boxes_by_month(df_current, df_previous, machine_names, start_date, end_
 
     fig, ax = plt.subplots()
     # create the two bars
-    rects1 = ax.bar(
-        x - width/2,
-        df_period_monthly['Boxes_previous'],
-        width,
-        color=palette_list[5],
-        label='Previous',
-    )
-    rects2 = ax.bar(
-        x + width/2,
-        df_period_monthly['Boxes_current'],
-        width,
-        color=palette_list[4],
-        label='Current',
-    )
-    # Add y-axis label and legend
-    ax.set_ylabel('Boxes')
-    box = ax.get_position()
-    ax.set_position([box.x0,
-                     box.y0 + box.height * 0.2,
-                     box.width,
-                     box.height * 0.8],
-                    )
-    ax.legend(['Previous', 'Current'],
-              bbox_to_anchor=(0.5, -0.15),
-              ncol=2,
-              )
+    if df_previous is not None:
+        rects1 = ax.bar(
+            x - width/2,
+            df_period_monthly['Boxes_previous'],
+            width,
+            color=palette_list[5],
+            label='Previous',
+        )
+        rects2 = ax.bar(
+            x + width/2,
+            df_period_monthly['Boxes_current'],
+            width,
+            color=palette_list[4],
+            label='Current',
+        )
+        # Add y-axis label and legend
+        ax.set_ylabel('Boxes')
+        box = ax.get_position()
+        ax.set_position([box.x0,
+                         box.y0 + box.height * 0.2,
+                         box.width,
+                         box.height * 0.8],
+                        )
+        ax.legend(['Previous', 'Current'],
+                  bbox_to_anchor=(0.5, -0.15),
+                  ncol=2,
+                  )
+    else:
+        rects = ax.bar(x, df_period_monthly['Boxes_current'], width, color=palette_list[4])
 
     # Add text labels to each column
     for rect in rects1 + rects2:
