@@ -13,28 +13,28 @@ from selenium.webdriver.firefox.options import Options
 
 
 # define submenues in sidebar to uncollapse
-sub_counting = ('Produced boxes',
+sub_counting = ['Produced boxes',
                 'Incoming Items',
                 'Reject Induct',
                 'Total carton feed (ch. 1)',
                 'Total carton waste (ch. 1)',
                 'Total carton feed (ch. 2)',
                 'Total carton waste (ch. 2)',
-                )
-sub_timing = ('Idle time',
+                ]
+sub_timing = ['Idle time',
               'Run time',
               'Error time',
               'Corrective maintenance time',
               'Preventive maintenance time',
-              )
-sub_bad_boxes = ('Bad boxes: All reasons',
+              ]
+sub_bad_boxes = ['Bad boxes: All reasons',
                  'Bad boxes: Reject reason 1',
                  'Bad boxes: Reject reason 2',
                  'Bad boxes: Reject reason 3',
                  'Bad boxes: Reject reason 4',
                  'Bad boxes: Reject all other reasons',
                  'Bad boxes: Removed boxes',
-                 )
+                 ]
 
 # set download path and start the driver
 # ------------------------------------------------------------------------------
