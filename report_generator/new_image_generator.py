@@ -452,14 +452,3 @@ def create_multi_barplot(df_mbp, machine_names, title):
 
     plt.show()
 # -----------------------------------------------------------------------------
-
-
-df_current = pd.read_csv('./raw_data/produced_boxes_daily.csv',
-                         delimiter=';',
-                         usecols=['DateTime',
-                                  'Machine',
-                                  'Boxes',
-                                  ],
-                         )
-
-create_multi_barplot(df_current, machine_names, 'test')
