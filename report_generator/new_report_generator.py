@@ -91,12 +91,12 @@ else:
     end_date = datetime(year, month + 1, 1) - timedelta(days=1)
 
 # Calculate the second start_date (12 months before the end_date)
-second_start_date = end_date - relativedelta(months=11)
-second_start_date = second_start_date.replace(day=1)
+historic_start_date = end_date - relativedelta(months=11)
+historic_start_date = historic_start_date.replace(day=1)
 
 # Format start_date and end_date as strings
 start_date_str = start_date.strftime("%d/%m/%Y")
-second_start_date_str = second_start_date.strftime("%d/%m/%Y")
+historic_start_date_str = historic_start_date.strftime("%d/%m/%Y")
 end_date_str = end_date.strftime("%d/%m/%Y")
 
 # TODO: input() instead of hardcoded if necessary
