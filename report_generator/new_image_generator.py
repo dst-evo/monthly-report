@@ -50,12 +50,6 @@ palette_list = ['#FDE725',
                 'grey',
                 ]
 
-machine_names = ['L1 - VPM B (4958)',
-                 'L2 - VPM A (4959)',
-                 'L3 - VPM C (4960)',
-                 'L4 - VPM D (4961)',
-                 ]
-
 # define legend style
 custom_lines = [Line2D([0], [0], color=palette_lc(0), lw=8),
                 Line2D([0], [0], color=palette_lc(1), lw=8),
@@ -84,24 +78,27 @@ def plot_boxes_by_month(df_current, machine_names, start_date, end_date, title, 
 
     # Filter rows where 'Machine' is in the list of Machine Names
     df_current = df_current[df_current['Machine'].isin(machine_names)]
-    df_previous = df_previous[df_previous['Machine'].isin(machine_names)]
 
     # Convert DateTime column to pandas datetime format
     df_current['DateTime'] = pd.to_datetime(df_current['DateTime'])
-    df_previous['DateTime'] = pd.to_datetime(df_previous['DateTime'])
 
-    # Add a year to the DateTime column in df_previous, if provided
     if df_previous is not None:
-        df_previous['DateTime'] = df_previous['DateTime'] + pd.offsets.DateOffset(years=1)
+        # Filter rows where 'Machine' is in the list of Machine Names
+        df_previous = df_previous[df_previous['Machine'].isin(machine_names)]
+
+        df_previous['DateTime'] = pd.to_datetime(df_previous['DateTime'])
+        df_previous['DateTime'] = df_previous['DateTime'] + \
+            pd.offsets.DateOffset(years=1)
 
         # Merge the two dataframes based on DateTime column
-        df_merged = pd.merge(df_current, df_previous, on='DateTime')
+        df_merged = pd.merge(df_current, df_previous,
+                             on='DateTime', how='outer')
 
         # Rename the columns to differentiate between the two sets of boxes
         df_merged = df_merged.rename(
             columns={'Boxes_x': 'Boxes_current', 'Boxes_y': 'Boxes_previous'})
     else:
-        df_merged = df_current.rename(columns={'Boxes_x': 'Boxes_current'})
+        df_merged = df_current.rename(columns={'Boxes': 'Boxes_current'})
 
     # Extract the values for the desired time period
     # start_date = pd.to_datetime('2022-04-01')
@@ -148,7 +145,8 @@ def plot_boxes_by_month(df_current, machine_names, start_date, end_date, title, 
                   ncol=2,
                   )
     else:
-        rects = ax.bar(x, df_period_monthly['Boxes_current'], width, color=palette_list[4])
+        rects = ax.bar(
+            x, df_period_monthly['Boxes_current'], width, color=palette_list[4])
 
     # Add text labels to each column
     for rect in rects1 + rects2:
