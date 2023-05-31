@@ -22,52 +22,15 @@ import seaborn as sns
 import new_image_generator as ig
 import get_data_from_dashboard as gdfd
 import download_data as dd
+import read_data_from_csv as rdfc
 from getpass import getpass
 from matplotlib.lines import Line2D
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 # -----------------------------------------------------------------------------
 
-# set global plt parameters
+# set machine_names
 # -----------------------------------------------------------------------------
-plt.rcParams['figure.figsize'] = [16.0, 9.0]  # [16.0, 9.0]
-plt.rcParams['figure.dpi'] = 300
-plt.rcParams['font.family'] = 'Europa-Regular'
-plt.rcParams['axes.grid'] = True
-plt.rcParams['axes.grid.axis'] = 'y'
-plt.rcParams['axes.axisbelow'] = True
-plt.rcParams['legend.frameon'] = False
-plt.rcParams['legend.loc'] = 'upper center'
-plt.rcParams['lines.linewidth'] = 3.5
-plt.rcParams['font.size'] = 22
-# -----------------------------------------------------------------------------
-
-# define colors and names for the plots
-# -----------------------------------------------------------------------------
-# define color map
-palette_lc = colors.ListedColormap(
-    ['#FDE725',
-     '#7AD151',
-     '#22A884',
-     '#2A788E',
-     '#414487',
-     'grey',
-     ])
-
-palette_list = ['#FDE725',
-                '#7AD151',
-                '#22A884',
-                '#2A788E',
-                '#414487',
-                'grey',
-                ]
-
-# define legend style
-custom_lines = [Line2D([0], [0], color=palette_lc(0), lw=8),
-                Line2D([0], [0], color=palette_lc(1), lw=8),
-                Line2D([0], [0], color=palette_lc(2), lw=8),
-                Line2D([0], [0], color=palette_lc(3), lw=8),
-                ]
 machine_names = ['L1 - VPM B (4958)',
                  'L2 - VPM A (4959)',
                  'L3 - VPM C (4960)',
@@ -125,71 +88,13 @@ ip_address = "172.22.139.212"
 
 # -----------------------------------------------------------------------------
 # Read in all the CSV files
-cm_time = pd.read_csv("./raw_data/corr_maint_time.csv",
-                      delimiter=';',
-                      usecols=['DateTime',
-                               'Machine',
-                               'Hours',
-                               ],
-                      )
-et_time = pd.read_csv("./raw_data/error_time.csv",
-                      delimiter=';',
-                      usecols=['DateTime',
-                               'Machine',
-                               'Hours',
-                               ],
-                      )
-it_time = pd.read_csv("./raw_data/idle_time.csv",
-                      delimiter=';',
-                      usecols=['DateTime',
-                               'Machine',
-                               'Hours',
-                               ],
-                      )
-pm_time = pd.read_csv("./raw_data/prev_maint_time.csv",
-                      delimiter=';',
-                      usecols=['DateTime',
-                               'Machine',
-                               'Hours',
-                               ],
-                      )
-rt_time = pd.read_csv("./raw_data/run_time.csv",
-                      delimiter=';',
-                      usecols=['DateTime',
-                               'Machine',
-                               'Hours',
-                               ],
-                      )
+df_time = rdfc.merge_time_data()
+#df_monthly = rdfc.merge_monthly_data()
+df_historical = rdfc.merge_historical_data()
 
-# Merge all the dataframes on 'Machine' and 'DateTime'
-df_time_merged = pd.merge(cm_time,
-                          et_time,
-                          on=["Machine", "DateTime"],
-                          how="outer",
-                          suffixes=('_corr_maint', '_error'))
-df_time_merged = pd.merge(df_time_merged,
-                          it_time,
-                          on=["Machine", "DateTime"],
-                          how="outer",
-                          )
-df_time_merged = pd.merge(df_time_merged,
-                          pm_time,
-                          on=["Machine", "DateTime"],
-                          how="outer",
-                          )
-df_time_merged = pd.merge(df_time_merged,
-                          rt_time,
-                          on=["Machine", "DateTime"],
-                          how="outer",
-                          )
+#
+output = ig.plot_boxes_by_month(df_historical, machine_names,
+                       historic_start_date, end_date, 'Total Boxes per Month')
 
-# Rename the columns
-df_time_merged = df_time_merged.rename(columns={'Hours': 'Hours_run'})
-df_time_merged = df_time_merged.rename(columns={'Hours_x': 'Hours_idle'})
-df_time_merged = df_time_merged.rename(columns={'Hours_y': 'Hours_prev'})
-
-# Replace missing values with 0
-df_time_merged.fillna(0, inplace=True)
-
-print(df_time_merged)
+plt.show()
 # -----------------------------------------------------------------------------
