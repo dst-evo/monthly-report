@@ -3,7 +3,7 @@
 import get_data_from_dashboard as gdfd
 
 
-def download_data_parts(driver, start_date_str, end_date_str, second_start_date_str):
+def download_data_parts(driver, start_date_str, end_date_str, historic_start_date_str):
     """
     Download multiple data parts from the dashboard using the given parameters.
 
@@ -20,10 +20,10 @@ def download_data_parts(driver, start_date_str, end_date_str, second_start_date_
     gdfd.configure_and_download_data(driver,
                                      "month",
                                      "yes",
-                                     second_start_date_str,
+                                     historic_start_date_str,
                                      end_date_str,
                                      "Produced boxes",
-                                     "boxes_total_current_interval.csv",
+                                     "historic_boxes",
                                      )
 
     print("Downloading Data part 2")
@@ -33,7 +33,7 @@ def download_data_parts(driver, start_date_str, end_date_str, second_start_date_
                                      start_date_str,
                                      end_date_str,
                                      "Produced boxes",
-                                     "produced_boxes_daily.csv",
+                                     "daily_boxes.csv",
                                      )
 
     print("Downloading Data part 3")
@@ -120,38 +120,38 @@ def download_data_parts(driver, start_date_str, end_date_str, second_start_date_
     gdfd.configure_and_download_data(driver,
                                      "month",
                                      "no",
-                                     second_start_date_str,
+                                     historic_start_date_str,
                                      end_date_str,
                                      "Bad boxes: All reasons",
-                                     "bad_boxes_hist.csv"
+                                     "historic_bad_boxes.csv"
                                      )
 
     print("Downloading Data part 11")
     gdfd.configure_and_download_data(driver,
                                      "month",
                                      "no",
-                                     second_start_date_str,
+                                     historic_start_date_str,
                                      end_date_str,
                                      "Throughput",
-                                     "machine_tp_hist.csv"
+                                     "historic_machine_tp.csv"
                                      )
 
     print("Downloading Data part 12")
     gdfd.configure_and_download_data(driver,
                                      "month",
                                      "no",
-                                     second_start_date_str,
+                                     historic_start_date_str,
                                      end_date_str,
                                      "Throughput CMC",
-                                     "machine_tp_cmc_hist.csv"
+                                     "historic_machine_tp_cmc.csv"
                                      )
 
     print("Downloading Data part 13")
     gdfd.configure_and_download_data(driver,
                                      "month",
                                      "no",
-                                     second_start_date_str,
+                                     historic_start_date_str,
                                      end_date_str,
                                      "Operational availability",
-                                     "op_avail_hist.csv"
+                                     "historic_op_avail.csv"
                                      )
