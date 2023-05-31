@@ -76,21 +76,22 @@ def plot_boxes_by_month(df_current, machine_names, start_date, end_date, title, 
         matplotlib.figure.Figure: A grouped bar chart comparing the number of boxes for each month and year.
     """
 
+    # Ensure start_date and end_date are datetime objects
+    if isinstance(start_date, str):
+        start_date = pd.to_datetime(start_date)
+    if isinstance(end_date, str):
+        end_date = pd.to_datetime(end_date)
+
     # Filter rows where 'Machine' is in the list of Machine Names
     df_current = df_current[df_current['Machine'].isin(machine_names)]
-
     # Convert DateTime column to pandas datetime format
     df_current['DateTime'] = pd.to_datetime(df_current['DateTime'])
 
     if df_previous is not None:
-        # Filter rows where 'Machine' is in the list of Machine Names
         df_previous = df_previous[df_previous['Machine'].isin(machine_names)]
-
         df_previous['DateTime'] = pd.to_datetime(df_previous['DateTime'])
         df_previous['DateTime'] = df_previous['DateTime'] + \
             pd.offsets.DateOffset(years=1)
-
-        # Merge the two dataframes based on DateTime column
         df_merged = pd.merge(df_current, df_previous,
                              on='DateTime', how='outer')
 
@@ -101,10 +102,8 @@ def plot_boxes_by_month(df_current, machine_names, start_date, end_date, title, 
         df_merged = df_current.rename(columns={'Boxes': 'Boxes_current'})
 
     # Extract the values for the desired time period
-    # start_date = pd.to_datetime('2022-04-01')
-    # end_date = pd.to_datetime('2023-03-01')
-    df_period = df_merged[(df_merged['DateTime'] >= start_date)
-                          & (df_merged['DateTime'] < end_date)]
+    df_period = df_merged[(df_merged['DateTime'] >= start_date) & (
+        df_merged['DateTime'] < end_date)]
 
     # Group by month and year and sum Boxes values for each month and year
     df_period_monthly = df_period.groupby(
@@ -116,58 +115,31 @@ def plot_boxes_by_month(df_current, machine_names, start_date, end_date, title, 
     width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
-    # create the two bars
+
     if df_previous is not None:
         rects1 = ax.bar(
-            x - width/2,
-            df_period_monthly['Boxes_previous'],
-            width,
-            color=palette_list[5],
-            label='Previous',
-        )
+            x - width/2, df_period_monthly['Boxes_previous'], width, label='Previous')
         rects2 = ax.bar(
-            x + width/2,
-            df_period_monthly['Boxes_current'],
-            width,
-            color=palette_list[4],
-            label='Current',
-        )
+            x + width/2, df_period_monthly['Boxes_current'], width, label='Current')
+        rects = rects1 + rects2
         # Add y-axis label and legend
         ax.set_ylabel('Boxes')
-        box = ax.get_position()
-        ax.set_position([box.x0,
-                         box.y0 + box.height * 0.2,
-                         box.width,
-                         box.height * 0.8],
-                        )
-        ax.legend(['Previous', 'Current'],
-                  bbox_to_anchor=(0.5, -0.15),
-                  ncol=2,
-                  )
+        ax.legend()
     else:
-        rects = ax.bar(
-            x, df_period_monthly['Boxes_current'], width, color=palette_list[4])
+        rects = ax.bar(x, df_period_monthly['Boxes_current'], width)
+        ax.set_ylabel('Boxes')
 
     # Add text labels to each column
-    for rect in rects1 + rects2:
+    for rect in rects:
         height = rect.get_height()
-        ax.text(rect.get_x() + rect.get_width() / 2,
-                height,
-                int(height),
-                ha='center',
-                va='bottom',
-                fontsize=16,
-                )
+        ax.text(rect.get_x() + rect.get_width() / 2, height,
+                int(height), ha='center', va='bottom', fontsize=16)
 
     # Set tick labels and title
     ax.set_xticks(x)
-    ax.set_xticklabels(labels,
-                       rotation=45,
-                       ha='right',
-                       )
+    ax.set_xticklabels(labels, rotation=45, ha='right')
     ax.set_title(title)
 
-    # return the figure
     return fig
 # -----------------------------------------------------------------------------
 
