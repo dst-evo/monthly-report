@@ -29,7 +29,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 2")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Produced boxes",
@@ -39,7 +39,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 3")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Throughput",
@@ -49,7 +49,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 4")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Throughput CMC",
@@ -59,7 +59,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 5")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Idle time",
@@ -69,7 +69,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 6")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Run time",
@@ -79,7 +79,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 7")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Error time",
@@ -89,7 +89,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 8")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Corrective maintenance time",
@@ -99,7 +99,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 9")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Preventive maintenance time",
@@ -109,7 +109,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 9")
     gdfd.configure_and_download_data(driver,
                                      "day",
-                                     "no",
+                                     "yes",
                                      start_date_str,
                                      end_date_str,
                                      "Bad boxes: All reasons",
@@ -119,7 +119,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 10")
     gdfd.configure_and_download_data(driver,
                                      "month",
-                                     "no",
+                                     "yes",
                                      historic_start_date_str,
                                      end_date_str,
                                      "Bad boxes: All reasons",
@@ -129,7 +129,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 11")
     gdfd.configure_and_download_data(driver,
                                      "month",
-                                     "no",
+                                     "yes",
                                      historic_start_date_str,
                                      end_date_str,
                                      "Throughput",
@@ -139,7 +139,7 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 12")
     gdfd.configure_and_download_data(driver,
                                      "month",
-                                     "no",
+                                     "yes",
                                      historic_start_date_str,
                                      end_date_str,
                                      "Throughput CMC",
@@ -149,9 +149,39 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
     print("Downloading Data part 13")
     gdfd.configure_and_download_data(driver,
                                      "month",
-                                     "no",
+                                     "yes",
                                      historic_start_date_str,
                                      end_date_str,
                                      "Operational availability",
                                      "historic_op_avail.csv"
+                                     )
+
+    print("Downloading Data part 14")
+    gdfd.configure_and_download_data(driver,
+                                     "month",
+                                     "yes",
+                                     historic_start_date_str,
+                                     end_date_str,
+                                     "Total carton feed (ch. 1)",
+                                     "carton_ch1.csv"
+                                     )
+
+    print("Downloading Data part 15")
+    gdfd.configure_and_download_data(driver,
+                                     "month",
+                                     "yes",
+                                     historic_start_date_str,
+                                     end_date_str,
+                                     "Total carton feed (ch. 2)",
+                                     "carton_ch2.csv"
+                                     )
+
+    print("Downloading Data part 16")
+    gdfd.configure_and_download_data(driver,
+                                     "day",
+                                     "yes",
+                                     start_date_str,
+                                     end_date_str,
+                                     "Operational availability",
+                                     "op_avail.csv"
                                      )
