@@ -107,13 +107,14 @@ def merge_historical_data(delimiter=';'):
                          "Machine", "DateTime"], how="outer")
 
     # Rename the columns
-    df_merged = df_merged.rename(columns={'Boxes/hour': 'Boxes/hour_machine_tp_cmc', 'Boxes/hour_boxes': 'Boxes/hour_machine_tp',
-                                 '(Boxes%)': '(Boxes%_bad_boxes)', 'Quantity': 'Quantity_bad_boxes', 'Time%': 'Time%_op_avail'})
+    df_merged = df_merged.rename(columns={'Boxes/hour_x': 'machine_tp', 'Boxes/hour_y': 'machine_tp_cmc',
+                                 'Boxes%': 'rel_bad_boxes', 'Quantity': 'abs_bad_boxes', 'Time%': 'op_avail'})
 
     # Replace missing values with 0
     df_merged.fillna(0, inplace=True)
 
     return df_merged
+
 
 def merge_monthly_data(delimiter=';'):
     """
@@ -165,8 +166,8 @@ def merge_monthly_data(delimiter=';'):
                          "Machine", "DateTime"], how="outer")
 
     # Rename the columns
-    df_merged = df_merged.rename(columns={'Boxes/hour': 'Boxes/hour_machine_tp_cmc', 'Boxes/hour_boxes': 'Boxes/hour_machine_tp',
-                                 '(Boxes%)': '(Boxes%_bad_boxes)', 'Quantity': 'Quantity_bad_boxes', 'Time%': 'Time%_op_avail'})
+    df_merged = df_merged.rename(columns={'Boxes/hour_x': 'machine_tp', 'Boxes/hour_y': 'machine_tp_cmc',
+                                 'Boxes%': 'rel_bad_boxes', 'Quantity': 'abs_bad_boxes', 'Time%': 'op_avail'})
 
     # Replace missing values with 0
     df_merged.fillna(0, inplace=True)
