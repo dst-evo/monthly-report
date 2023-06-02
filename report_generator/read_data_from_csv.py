@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import new_calculator as nc
 
 
 def merge_time_data(delimiter=';', columns=['DateTime', 'Machine', 'Hours']):
@@ -126,6 +127,9 @@ def merge_historical_data(delimiter=';'):
 
     # Replace missing values with 0
     df_merged.fillna(0, inplace=True)
+
+    # calculate squaremeters per box
+    df_merged = nc.calculate_carton_per_box(df_merged)
 
     return df_merged
 
