@@ -183,11 +183,10 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
     # Give the file some time to download
     time.sleep(1)
 
-    # Get the latest downloaded file from the download directory
+    # Wait for the file to download
     download_directory = os.path.join(
         os.path.dirname(os.path.realpath(__file__)), "raw_data")
-    latest_file = max([os.path.join(download_directory, f)
-                      for f in os.listdir(download_directory)], key=os.path.getctime)
+    latest_file = wait_for_download(download_directory)
 
     # Rename the downloaded file to the specified file_name
     new_file_path = os.path.join(download_directory, file_name)
@@ -199,3 +198,27 @@ def configure_and_download_data(driver, granularity, totalized, start_date, end_
         EC.element_to_be_clickable((By.XPATH, sidebar_button_xpath))
     )
     sidebar_button.click()
+
+
+def wait_for_download(directory, timeout=30):
+    """
+    Wait for the download to finish.
+
+    Parameters:
+    directory (str): The directory where the file is being downloaded.
+    timeout (int, optional): The maximum amount of time to wait, in seconds. Default is 30.
+
+    Returns:
+    str: The path of the downloaded file.
+    """
+    seconds = 0
+    while seconds < timeout:
+        files = os.listdir(directory)
+        if files:  # if the list of files is not empty
+            for file in files:
+                if not file.endswith(".part"):  # Firefox's temp file extension
+                    return os.path.join(directory, file)
+        time.sleep(1)
+        seconds += 1
+    raise TimeoutError(
+        f"No file was downloaded to {directory} after {timeout} seconds")
