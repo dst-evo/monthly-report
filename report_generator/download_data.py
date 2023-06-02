@@ -1,6 +1,7 @@
 # download data from dashboard to .csv files
 
 import get_data_from_dashboard as gdfd
+import time
 
 
 def download_data_parts(driver, start_date_str, end_date_str, historic_start_date_str):
@@ -23,9 +24,27 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
                                      historic_start_date_str,
                                      end_date_str,
                                      "Produced boxes",
-                                     "historic_boxes",
+                                     "historic_boxes.csv",
                                      )
-
+    print("Downloading Data part 1")
+    gdfd.configure_and_download_data(driver,
+                                     "month",
+                                     "yes",
+                                     historic_start_date_str,
+                                     end_date_str,
+                                     "Produced boxes",
+                                     "historic_boxes.csv",
+                                     )
+    time.sleep(10)
+    print("Downloading Data part 2")
+    gdfd.configure_and_download_data(driver,
+                                     "day",
+                                     "yes",
+                                     start_date_str,
+                                     end_date_str,
+                                     "Produced boxes",
+                                     "daily_boxes.csv",
+                                     )
     print("Downloading Data part 2")
     gdfd.configure_and_download_data(driver,
                                      "day",
