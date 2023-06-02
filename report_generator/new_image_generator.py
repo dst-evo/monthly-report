@@ -475,10 +475,10 @@ def create_multi_barplot(df_mbp_orig, machine_names, x_col=None, y_col=None, tit
             if is_percentage:
                 # Format as percentage if is_percentage is True
                 # height *= 100  # Convert the value to a percentage
-                label = f'{height:.2%}'
+                label = f'{height:.2f}'
             else:
                 # Format as float with 2 decimal places
-                label = f'{height:.2f}'
+                label = f'{int(height)}'
             axs[i].text(rect.get_x() + rect.get_width() / 2., height + 0.01, label,
                         ha='center', va='bottom', fontsize=14)
 
