@@ -14,6 +14,8 @@
 
 # load Libraries
 # -----------------------------------------------------------------------------
+import os
+import subprocess
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -75,20 +77,20 @@ ip_address = "172.22.139.212"
 # download all needed data
 # -----------------------------------------------------------------------------
 # configure driver
-# print("Configuring Selenium webdriver")
-# driver = gdfd.create_configured_driver(ip_address)
-##
+print("Configuring Selenium webdriver")
+driver = gdfd.create_configured_driver(ip_address)
+
 # login into the dasboard
-# print("Starting the login process")
-# gdfd.login(driver, username, password)
-#
+print("Starting the login process")
+gdfd.login(driver, username, password)
+
 # download the data
 # -----------------------------------------------------------------------------
-# dd.download_data_parts(driver,
-#                       start_date_str,
-#                       end_date_str,
-#                       historic_start_date_str,
-#                       )
+dd.download_data_parts(driver,
+                       start_date_str,
+                       end_date_str,
+                       historic_start_date_str,
+                       )
 # -----------------------------------------------------------------------------
 
 
@@ -183,4 +185,11 @@ for machine_name in machine_names:
     output = ig.create_pie_chart(df_time, machine_name, working_seconds)
     plt.savefig('./output/img/piechart_monthly_' + machine_name + '.pdf')
     plt.clf()
+
+os.chdir(os.getcwd() + '/output')
+# call lualatex and compile the texfile
+subprocess.check_call(['lualatex', 'monthly_report.tex'])
+
+os.system('CLS')
+print('~~ FIN ~~')
 # -----------------------------------------------------------------------------
