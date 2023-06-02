@@ -101,44 +101,44 @@ df_historical = rdfc.merge_historical_data()
 
 # create figures and save them to the output folder
 # -----------------------------------------------------------------------------
-# output = ig.create_single_lineplot(
-#     df_monthly, 'Total', 'DateTime', 'Boxes')
-# plt.savefig('./output/img/lineplot_daily_boxes.pdf')
-# plt.clf()
-#
-# output = ig.create_grouped_barplot(
-#     df_monthly, machine_names, 'DateTime', 'Boxes')
-# plt.savefig('./output/img/groupedbar_daily_boxes.pdf')
-# plt.clf()
-#
-# output = ig.create_donut_chart(df_historical, machine_names,)
-# plt.savefig('./output/img/donut_total_boxes.pdf')
-# plt.clf()
-#
-# output = ig.plot_boxes_by_month(df_historical, machine_names,
-#                                 historic_start_date, end_date,)
-# plt.savefig('./output/img/barplot_monthly_boxes.pdf')
-# plt.clf()
-#
-# output = ig.create_multi_lineplot(
-#     df_monthly, machine_names, 'DateTime', 'machine_tp')
-# plt.savefig('./output/img/multiline_daily_tp.pdf')
-# plt.clf()
-#
-# output = ig.create_multi_barplot(
-#     df_historical, machine_names, 'DateTime', 'machine_tp')
-# plt.savefig('./output/img/multibar_monthly_tp.pdf')
-# plt.clf()
-#
-# output = ig.create_multi_lineplot(
-#     df_monthly, machine_names, 'DateTime', 'machine_tp_cmc')
-# plt.savefig('./output/img/multiline_daily_tp_cmc.pdf')
-# plt.clf()
-#
-# output = ig.create_multi_barplot(
-#     df_historical, machine_names, 'DateTime', 'machine_tp_cmc')
-# plt.savefig('./output/img/multibar_monthly_tp_cmc.pdf')
-# plt.clf()
+output = ig.create_single_lineplot(
+    df_monthly, 'Total', 'DateTime', 'Boxes')
+plt.savefig('./output/img/lineplot_daily_boxes.pdf')
+plt.clf()
+
+output = ig.create_grouped_barplot(
+    df_monthly, machine_names, 'DateTime', 'Boxes')
+plt.savefig('./output/img/groupedbar_daily_boxes.pdf')
+plt.clf()
+
+output = ig.create_donut_chart(df_historical, machine_names,)
+plt.savefig('./output/img/donut_total_boxes.pdf')
+plt.clf()
+
+output = ig.plot_boxes_by_month(df_historical, machine_names,
+                                historic_start_date, end_date,)
+plt.savefig('./output/img/barplot_monthly_boxes.pdf')
+plt.clf()
+
+output = ig.create_multi_lineplot(
+    df_monthly, machine_names, 'DateTime', 'machine_tp')
+plt.savefig('./output/img/multiline_daily_tp.pdf')
+plt.clf()
+
+output = ig.create_multi_barplot(
+    df_historical, machine_names, 'DateTime', 'machine_tp')
+plt.savefig('./output/img/multibar_monthly_tp.pdf')
+plt.clf()
+
+output = ig.create_multi_lineplot(
+    df_monthly, machine_names, 'DateTime', 'machine_tp_cmc')
+plt.savefig('./output/img/multiline_daily_tp_cmc.pdf')
+plt.clf()
+
+output = ig.create_multi_barplot(
+    df_historical, machine_names, 'DateTime', 'machine_tp_cmc')
+plt.savefig('./output/img/multibar_monthly_tp_cmc.pdf')
+plt.clf()
 
 output = ig.create_single_lineplot(
     df_monthly, 'Total', 'DateTime', 'abs_bad_boxes')
@@ -179,8 +179,8 @@ plt.clf()
 # create these plots last to not cause errors in other functions
 machine_names.append('Total')
 #
-# for machine_name in machine_names:
-#     output = ig.create_pie_chart(df_time, machine_name, working_seconds)
-#     plt.savefig('./output/img/piechart_monthly_' + machine_name + '.pdf')
-#     plt.clf()
+for machine_name in machine_names:
+    output = ig.create_pie_chart(df_time, machine_name, working_seconds)
+    plt.savefig('./output/img/piechart_monthly_' + machine_name + '.pdf')
+    plt.clf()
 # -----------------------------------------------------------------------------
