@@ -167,7 +167,7 @@ def create_donut_chart(df_donut_orig, machine_names, title=''):
     df_donut = df_donut_orig.copy()
     # Filter the rows to include only the last available month
     df_donut['DateTime'] = pd.to_datetime(
-        df_donut['DateTime'], format='%Y/%m/%d')
+        df_donut['DateTime'], format='%Y/%m')
     last_month = df_donut['DateTime'].max()
     df_last_month = df_donut[df_donut['DateTime'] == last_month]
 
