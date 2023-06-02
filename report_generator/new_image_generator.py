@@ -163,7 +163,8 @@ def plot_boxes_by_month(df_current_orig, machine_names, start_date, end_date, ti
 
 # Make a donut Chart with all Machines and plot the total in the middle
 # -----------------------------------------------------------------------------
-def create_donut_chart(df_donut, machine_names, title=''):
+def create_donut_chart(df_donut_orig, machine_names, title=''):
+    df_donut = df_donut_orig.copy()
     # Filter the rows to include only the last available month
     df_donut['DateTime'] = pd.to_datetime(
         df_donut['DateTime'], format='%Y/%m/%d')
@@ -231,7 +232,7 @@ def create_donut_chart(df_donut, machine_names, title=''):
 
 # create a single line chart that shows the total daily produced boxes
 # -----------------------------------------------------------------------------
-def create_single_lineplot(df, machine_names, x_col, y_col, title=''):
+def create_single_lineplot(df_orig, machine_names, x_col, y_col, title=''):
     """
     Creates a line plot of box values for a specific machine for each day
     of the month.
@@ -246,6 +247,7 @@ def create_single_lineplot(df, machine_names, x_col, y_col, title=''):
     Returns:
     - matplotlib.figure.Figure: the resulting figure
     """
+    df = df_orig.copy()
     # format DateTime to dd/mm
     df['DateTime'] = pd.to_datetime(df[x_col])
     # df['DateTime'] = df['DateTime'].dt.strftime('%d/%m')
