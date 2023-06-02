@@ -135,3 +135,24 @@ def format_percentage(n):
         format_str = "{:.2f}%"
     # Return the formatted string
     return format_str.format(n / 10)
+
+
+def calculate_carton_per_box(df):
+    """
+    Calculate the 'carton_per_box' by multiplying 'carton_ch1' by 1.4, 
+    'carton_ch2' by 1 and then dividing by 'Boxes'.
+
+    Args:
+        df (pd.DataFrame): Original DataFrame.
+
+    Returns:
+        pd.DataFrame: A new DataFrame with the 'carton_per_box' column added.
+    """
+    # Make a copy of the DataFrame to avoid modifying the original DataFrame
+    df_new = df.copy()
+
+    # Calculate 'carton_per_box'
+    df_new['carton_per_box'] = (
+        df_new['carton_ch1'] * 1.4 + df_new['carton_ch2']) / df_new['Boxes']
+
+    return df_new
