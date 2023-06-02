@@ -170,6 +170,12 @@ output = ig.create_multi_barplot(
 plt.savefig('./output/img/multibar_monthly_op_avail.pdf')
 plt.clf()
 
+print(df_historical)
+output = ig.create_multi_barplot(
+    df_historical, machine_names, 'DateTime', 'carton_per_box')
+plt.savefig('./output/img/multibar_monthly_carton_per_box.pdf')
+plt.clf()
+
 # create these plots last to not cause errors in other functions
 machine_names.append('Total')
 #
