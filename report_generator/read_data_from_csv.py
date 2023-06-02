@@ -73,7 +73,9 @@ def merge_historical_data(delimiter=';'):
         "machine_tp": "./raw_data/historic_machine_tp.csv",
         "machine_tp_cmc": "./raw_data/historic_machine_tp_cmc.csv",
         "bad_boxes": "./raw_data/historic_bad_boxes.csv",
-        "op_avail": "./raw_data/historic_op_avail.csv"
+        "op_avail": "./raw_data/historic_op_avail.csv",
+        "carton_ch1": "./raw_data/carton_ch1.csv",
+        "carton_ch2": "./raw_data/carton_ch2.csv",
     }
 
     columns = {
@@ -81,7 +83,9 @@ def merge_historical_data(delimiter=';'):
         "machine_tp": ['DateTime', 'Machine', 'Boxes/hour'],
         "machine_tp_cmc": ['DateTime', 'Machine', 'Boxes/hour'],
         "bad_boxes": ['DateTime', 'Machine', 'Boxes%', 'Quantity'],
-        "op_avail": ['DateTime', 'Machine', 'Time%']
+        "op_avail": ['DateTime', 'Machine', 'Time%'],
+        "carton_ch1": ['DateTime', 'Machine', 'mt'],
+        "carton_ch2": ['DateTime', 'Machine', 'mt'],
     }
 
     dataframes = {}
@@ -105,10 +109,20 @@ def merge_historical_data(delimiter=';'):
                          "Machine", "DateTime"], how="outer")
     df_merged = pd.merge(df_merged, dataframes['op_avail'], on=[
                          "Machine", "DateTime"], how="outer")
+    df_merged = pd.merge(df_merged, dataframes['carton_ch1'], on=[
+                         "Machine", "DateTime"], how="outer")
+    df_merged = pd.merge(df_merged, dataframes['carton_ch2'], on=[
+                         "Machine", "DateTime"], how="outer")
 
     # Rename the columns
-    df_merged = df_merged.rename(columns={'Boxes/hour_x': 'machine_tp', 'Boxes/hour_y': 'machine_tp_cmc',
-                                 'Boxes%': 'rel_bad_boxes', 'Quantity': 'abs_bad_boxes', 'Time%': 'op_avail'})
+    df_merged = df_merged.rename(columns={'Boxes/hour_x': 'machine_tp',
+                                          'Boxes/hour_y': 'machine_tp_cmc',
+                                          'Boxes%': 'rel_bad_boxes',
+                                          'Quantity': 'abs_bad_boxes',
+                                          'Time%': 'op_avail',
+                                          'mt_x': 'carton_ch1',
+                                          'mt_y': 'carton_ch2',
+                                          })
 
     # Replace missing values with 0
     df_merged.fillna(0, inplace=True)
