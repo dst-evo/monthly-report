@@ -445,8 +445,11 @@ def create_multi_barplot(df_mbp_orig, machine_names, x_col=None, y_col=None, tit
     df_mbp['DateTime'] = pd.to_datetime(df_mbp[x_col])
     df_mbp['DateTime'] = df_mbp[x_col].dt.strftime('%b')
 
-    # Check if y_col values are percentages (strings ending with '%')
-    is_percentage = df_mbp_orig[y_col].str.endswith('%').any()
+    # Check if y_col values are strings and if they are percentages (strings ending with '%')
+    if df_mbp[y_col].dtype == 'object':
+        is_percentage = df_mbp[y_col].str.endswith('%').any()
+    else:
+        is_percentage = False
 
     if is_percentage:
         # Convert y_col values to numeric
@@ -474,8 +477,11 @@ def create_multi_barplot(df_mbp_orig, machine_names, x_col=None, y_col=None, tit
             height = rect.get_height()
             if is_percentage:
                 # Format as percentage if is_percentage is True
-                # height *= 100  # Convert the value to a percentage
                 label = f'{height:.2f}'
+            else:
+                # Format as integer if height is a whole number, or as a float otherwise
+                label = f'{int(height)}' if height.is_integer(
+                ) else f'{height:.2f}'
             axs[i].text(rect.get_x() + rect.get_width() / 2., height + 0.01, label,
                         ha='center', va='bottom', fontsize=14)
 
