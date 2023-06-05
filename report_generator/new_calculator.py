@@ -59,9 +59,9 @@ def percentage_to_float(df, col_name):
         raise ValueError(f"Input DataFrame must have a '{col_name}' column")
 
     df[col_name] = df[col_name].apply(
-        lambda x: x.replace("%", "") if isinstance(
-            x, str) and x.endswith('%') else x
-    ).astype(float) / 100
+        lambda x: float(x.replace("%", "")) /
+        100 if isinstance(x, str) and x.endswith('%') else x
+    )
 
     return df
 
