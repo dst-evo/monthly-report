@@ -193,7 +193,7 @@ def merge_monthly_data(delimiter=';'):
     return df_merged
 
 
-def read_csv_to_df(file_path):
+def read_csv_to_df(file_path, delimiter=';'):
     """
     Read a CSV file and convert it into a pandas DataFrame.
 
@@ -208,6 +208,6 @@ def read_csv_to_df(file_path):
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"No file found at provided path: {file_path}")
 
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, delimiter=delimiter)
 
     return df
