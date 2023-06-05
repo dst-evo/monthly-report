@@ -204,3 +204,13 @@ def download_data_parts(driver, start_date_str, end_date_str, historic_start_dat
                                      "Operational availability",
                                      "op_avail.csv"
                                      )
+
+    print("Downloading Data part 17")
+    gdfd.configure_and_download_data(driver,
+                                     "month",
+                                     "yes",
+                                     historic_start_date_str,
+                                     end_date_str,
+                                     "Produced boxes",
+                                     "historic_boxes_2.csv"
+                                     )
