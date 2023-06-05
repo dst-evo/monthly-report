@@ -189,7 +189,4 @@ for machine_name in machine_names:
 os.chdir(os.getcwd() + '/output')
 # call lualatex and compile the texfile
 subprocess.check_call(['lualatex', 'monthly_report.tex'])
-
-os.system('CLS')
-print('~~ FIN ~~')
 # -----------------------------------------------------------------------------
