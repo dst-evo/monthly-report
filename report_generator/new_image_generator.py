@@ -101,14 +101,13 @@ def plot_boxes_by_month(df_current_orig, machine_names, start_date, end_date, ti
     df_current = df_current[df_current['Machine'].isin(machine_names)]
     # Convert DateTime column to pandas datetime format
     df_current['DateTime'] = pd.to_datetime(df_current['DateTime'])
-
     if df_previous is not None:
         df_previous = df_previous[df_previous['Machine'].isin(machine_names)]
         df_previous['DateTime'] = pd.to_datetime(df_previous['DateTime'])
         df_previous['DateTime'] = df_previous['DateTime'] + \
             pd.offsets.DateOffset(years=1)
         df_merged = pd.merge(df_current, df_previous,
-                             on='DateTime', how='outer')
+                             on=['Machine', 'DateTime'], how='outer')
 
         # Rename the columns to differentiate between the two sets of boxes
         df_merged = df_merged.rename(
@@ -116,6 +115,7 @@ def plot_boxes_by_month(df_current_orig, machine_names, start_date, end_date, ti
     else:
         df_merged = df_current.rename(columns={'Boxes': 'Boxes_current'})
 
+    print(df_merged)
     # Extract the values for the desired time period
     df_period = df_merged[(df_merged['DateTime'] >= start_date) & (
         df_merged['DateTime'] < end_date)]
@@ -140,10 +140,30 @@ def plot_boxes_by_month(df_current_orig, machine_names, start_date, end_date, ti
         # Add y-axis label and legend
         ax.set_ylabel('Boxes')
         ax.legend()
+        # Create legend
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0 + box.height * 0.2,
+                         box.width, box.height * 0.8,
+                         ])
+        ax.legend([Line2D([0], [0], color=palette_lc(5), lw=8), Line2D([0], [0], color=palette_lc(4), lw=8)],
+                  ['Vorjahr', 'Total'],
+                  bbox_to_anchor=(0.5, -0.15),
+                  ncol=2,
+                  )
     else:
         rects = ax.bar(
             x, df_period_monthly['Boxes_current'], width, color=palette_list[4])
         ax.set_ylabel('Boxes')
+        # Create legend
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0 + box.height * 0.2,
+                         box.width, box.height * 0.8,
+                         ])
+        ax.legend(Line2D([0], [0], color=palette_lc(4), lw=8),
+                  'Total',
+                  bbox_to_anchor=(0.5, -0.15),
+                  ncol=1,
+                  )
 
     # Add text labels to each column
     for rect in rects:
