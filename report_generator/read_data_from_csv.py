@@ -191,3 +191,23 @@ def merge_monthly_data(delimiter=';'):
     df_merged.fillna(0, inplace=True)
 
     return df_merged
+
+
+def read_csv_to_df(file_path):
+    """
+    Read a CSV file and convert it into a pandas DataFrame.
+
+    Parameters:
+    file_path (str): The path to the CSV file.
+
+    Returns:
+    pandas.DataFrame: A DataFrame populated with the CSV data.
+    """
+    if not isinstance(file_path, str) or not file_path.endswith('.csv'):
+        raise ValueError("file_path must be a string ending with '.csv'")
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"No file found at provided path: {file_path}")
+
+    df = pd.read_csv(file_path)
+
+    return df
